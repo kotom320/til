@@ -3,7 +3,6 @@ import Head from "next/head";
 import { getPostSlugs, getPostHtml } from "@/lib/markdown";
 
 interface PostPageProps {
-  slug: string;
   metadata: {
     title: string;
     date: string;
@@ -13,7 +12,6 @@ interface PostPageProps {
 }
 
 export default function PostPage({
-  slug,
   metadata,
   contentHtml,
 }: Readonly<PostPageProps>) {
