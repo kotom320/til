@@ -32,8 +32,13 @@ export default function PostPage({
 
 // 가능한 모든 글의 slug를 경로로 만듦
 export const getStaticPaths: GetStaticPaths = async () => {
-  const slugs = getPostSlugs().map((filename) => filename.replace(/\.md$/, ""));
-  const paths = slugs.map((slug) => ({ params: { slug } }));
+  const slugs = getPostSlugs();
+
+  const paths = slugs.map((slug) => ({
+    params: {
+      slug: slug.replace(/\.md$/, "").split("/"), // 문자열 → 배열
+    },
+  }));
 
   return {
     paths,
@@ -43,7 +48,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 // 각 글에 대한 데이터를 HTML로 변환해서 props로 넘김
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const slug = params?.slug as string;
+  const slugParts = params?.slug as string[];
+  const slug = slugParts.join("/");
   const { metadata, contentHtml } = await getPostHtml(slug);
 
   return {
