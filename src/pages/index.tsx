@@ -1,51 +1,36 @@
+// src/pages/index.tsx
 import Link from "next/link";
-import { getPostSlugs, getPostBySlug } from "@/lib/markdown";
+import { GetStaticProps } from "next";
+import { getAllPosts, PostMeta } from "@/lib/getAllPosts";
 
-interface Post {
-  slug: string;
-  metadata: {
-    title: string;
-    date: string;
-    summary?: string;
-  };
+interface HomeProps {
+  posts: PostMeta[];
 }
 
-export default function Home({ posts }: Readonly<{ posts: Post[] }>) {
+export default function Home({ posts }: Readonly<HomeProps>) {
   return (
-    <main className="p-8 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Today I Learned</h1>
-      <ul className="space-y-6">
-        {posts.map(({ slug, metadata }) => (
-          <li
-            key={slug}
-            className="p-4 border rounded-md hover:shadow-sm transition"
-          >
-            <Link
-              href={`/post/${slug}`}
-              className="text-xl font-semibold text-blue-600 hover:underline"
-            >
-              {metadata.title}
+    <div>
+      <h1 className="text-2xl font-bold mb-6">전체 </h1>
+      <ul className="space-y-4">
+        {posts.map((post) => (
+          <li key={`${post.category}/${post.slug}`}>
+            <Link href={`/post/${post.category}/${post.slug}`}>
+              <div className="text-blue-600 hover:underline">{post.title}</div>
+              <div className="text-gray-500 text-sm">{post.date}</div>
             </Link>
-            <p className="text-sm text-gray-500 mt-1">{metadata.date}</p>
-            {metadata.summary && (
-              <p className="text-gray-700 mt-2">{metadata.summary}</p>
-            )}
           </li>
         ))}
       </ul>
-    </main>
+    </div>
   );
 }
 
-export async function getStaticProps() {
-  const slugs = getPostSlugs();
-  const posts = slugs
-    .map((slug) => getPostBySlug(slug))
-    .sort((a, b) => (a.metadata.date < b.metadata.date ? 1 : -1));
+export const getStaticProps: GetStaticProps = () => {
+  const posts = getAllPosts();
 
   return {
     props: {
       posts,
     },
   };
-}
+};
