@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import { GetStaticPaths, GetStaticProps } from "next";
-import Layout from "@/components/Layout";
 
 interface Props {
   category: string;
