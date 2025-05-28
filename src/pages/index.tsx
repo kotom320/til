@@ -12,20 +12,23 @@ interface Post {
 
 export default function Home({ posts }: Readonly<{ posts: Post[] }>) {
   return (
-    <main className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Today I Learned</h1>
+    <main className="p-8 max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8">Today I Learned</h1>
       <ul className="space-y-6">
         {posts.map(({ slug, metadata }) => (
-          <li key={slug}>
+          <li
+            key={slug}
+            className="p-4 border rounded-md hover:shadow-sm transition"
+          >
             <Link
               href={`/post/${slug}`}
-              className="text-xl font-medium text-blue-600 hover:underline"
+              className="text-xl font-semibold text-blue-600 hover:underline"
             >
               {metadata.title}
             </Link>
-            <p className="text-sm text-gray-500">{metadata.date}</p>
+            <p className="text-sm text-gray-500 mt-1">{metadata.date}</p>
             {metadata.summary && (
-              <p className="text-gray-700 mt-1">{metadata.summary}</p>
+              <p className="text-gray-700 mt-2">{metadata.summary}</p>
             )}
           </li>
         ))}

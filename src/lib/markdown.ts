@@ -7,7 +7,16 @@ import html from "remark-html";
 const postsDirectory = path.join(process.cwd(), "posts");
 
 export function getPostSlugs(): string[] {
-  return fs.readdirSync(postsDirectory).filter((file) => file.endsWith(".md"));
+  const walk = (dir: string): string[] => {
+    return fs.readdirSync(dir).flatMap((entry) => {
+      const fullPath = path.join(dir, entry);
+      return fs.statSync(fullPath).isDirectory()
+        ? walk(fullPath)
+        : [path.relative(postsDirectory, fullPath)];
+    });
+  };
+
+  return walk(postsDirectory);
 }
 
 export function getPostBySlug(slug: string) {
@@ -15,8 +24,11 @@ export function getPostBySlug(slug: string) {
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
+  const category = slug.split(path.sep)[0]; // javascript, typescript 등
+
   return {
-    slug: slug.replace(/\.md$/, ""),
+    slug: slug.replace(/\.md$/, "").replace(/\\/g, "/"),
+    category,
     metadata: data,
     content,
   };
