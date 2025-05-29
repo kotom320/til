@@ -25,7 +25,7 @@ export function getCategoryTree(
         return { name, path: `/post${urlPath}` };
       }
 
-      return null as any;
+      return null;
     })
-    .filter(Boolean);
+    .filter((node): node is CategoryNode => node !== null);
 }
