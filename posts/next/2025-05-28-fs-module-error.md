@@ -1,6 +1,6 @@
 ---
 title: "Next.js에서 fs 모듈 사용 시 발생하는 에러 정리"
-date: "2025-05-29"
+date: "2025-05-28"
 tags: ["Next.js", "fs", "TIL"]
 summary: "Next.js 프로젝트에서 'fs' 모듈 사용 시 발생하는 에러의 원인과 해결 방안을 정리했습니다."
 ---
