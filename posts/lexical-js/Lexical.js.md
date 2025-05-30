@@ -1,10 +1,8 @@
 ---
-
 title: "Lexical.js 정리"
 date: "2025-05-30"
 tags: \["Lexical.js", "React", "Performance", "Editor"]
 summary: "경량 플러그인 기반 리치 텍스트 에디터 프레임워크인 Lexical.js의 주요 아키텍처와 개념을 정리합니다."
-
 ---
 
 ## 사용 이유
