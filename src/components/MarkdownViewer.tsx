@@ -16,6 +16,16 @@ export default function MarkdownViewer({ content }: Props) {
       <Markdown
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
         remarkPlugins={[remarkGfm]}
+        components={{
+          ul: ({ children }) => (
+            <ul className="list-disc list-inside ml-4 space-y-1">{children}</ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="list-decimal list-inside ml-4 space-y-1">
+              {children}
+            </ol>
+          ),
+        }}
       >
         {content}
       </Markdown>
