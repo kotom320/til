@@ -68,6 +68,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <aside className="w-64 bg-gray-50 border-r p-4 text-sm overflow-auto">
+        <p className="text-gray-600 mb-4">고동욱- 오늘도 성장하는 개발자</p>
+        <nav className="mb-4">
+          <Link
+            href="/"
+            className="block px-2 py-1 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded"
+          >
+            홈
+          </Link>
+        </nav>
         <h2 className="font-semibold text-gray-700 mb-4">목록</h2>
         {renderTree(tree)}
       </aside>
