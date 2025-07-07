@@ -56,12 +56,12 @@ export default function MarkdownViewer({ content }: Props) {
             </a>
           ),
           ul: ({ children, ...props }) => (
-            <ul {...props} className="list-disc list-inside ml-4 space-y-1">
+            <ul {...props} className="list-disc list-outside ml-6 space-y-1">
               {children}
             </ul>
           ),
           ol: ({ children, ...props }) => (
-            <ol {...props} className="list-decimal list-inside ml-4 space-y-1">
+            <ol {...props} className="list-decimal list-outside ml-6 space-y-1">
               {children}
             </ol>
           ),

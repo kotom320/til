@@ -62,8 +62,7 @@ queryClient.invalidateQueries({
   * `matchQueryKey(queryKey, filterKey)`는 React Query의 내부 유틸로, `queryKey` 배열이 `filterKey`를 포함하는지 검사
   * 직접 `includes`나 `JSON.stringify` 비교 대신 사용하면 더 정확한 매칭이 가능
 
-    ```
-    ```
+    
   * **방법 3: filter 옵션 활용**
 
     ```ts
