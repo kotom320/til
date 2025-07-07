@@ -52,7 +52,7 @@ function parseFilePath(filePath: string): { category: string; slug: string } {
 /**
  * tags 데이터를 안전하게 배열로 변환합니다.
  */
-function normalizeTags(tags: any): string[] {
+function normalizeTags(tags: unknown): string[] {
   if (!tags) return [];
   if (Array.isArray(tags)) return tags.filter((tag) => typeof tag === "string");
   if (typeof tags === "string") return [tags];

@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getAllPosts, getPostsByCategory } from "@/lib/posts";
-import { PostMeta } from "@/types/category";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
