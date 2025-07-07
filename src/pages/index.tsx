@@ -1,12 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { getAllPostsClient } from "@/lib/posts-client";
 import { PostMeta } from "@/types/category";
+import Pagination from "@/components/Pagination";
+
+const POSTS_PER_PAGE = 5;
 
 export default function Home() {
+  const router = useRouter();
   const [posts, setPosts] = useState<PostMeta[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // URL 쿼리에서 페이지 번호 가져오기
+  useEffect(() => {
+    const page = parseInt(router.query.page as string) || 1;
+    setCurrentPage(page);
+  }, [router.query.page]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -22,6 +34,12 @@ export default function Home() {
 
     fetchPosts();
   }, []);
+
+  // 현재 페이지의 포스트들 계산
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const endIndex = startIndex + POSTS_PER_PAGE;
+  const currentPosts = posts.slice(startIndex, endIndex);
 
   if (loading) {
     return (
@@ -41,9 +59,16 @@ export default function Home() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">전체 포스트</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold">전체 포스트</h1>
+        <div className="text-sm text-gray-500">
+          총 {posts.length}개의 포스트
+        </div>
+      </div>
+
+      {/* 포스트 목록 */}
       <div className="grid gap-6">
-        {posts.map((post) => (
+        {currentPosts.map((post) => (
           <article
             key={`${post.category}/${post.slug}`}
             className="border-b border-gray-200 pb-6"
@@ -81,6 +106,23 @@ export default function Home() {
             </Link>
           </article>
         ))}
+      </div>
+
+      {/* 페이지네이션 */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl="/"
+      />
+
+      {/* 페이지 정보 */}
+      <div className="text-center text-sm text-gray-500 mt-4">
+        {posts.length > 0 && (
+          <span>
+            {startIndex + 1}-{Math.min(endIndex, posts.length)} / {posts.length}{" "}
+            포스트
+          </span>
+        )}
       </div>
     </div>
   );

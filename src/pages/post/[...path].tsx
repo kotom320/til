@@ -1,6 +1,9 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import MarkdownViewer from "@/components/MarkdownViewer";
+import Pagination from "@/components/Pagination";
 import {
   getCategoryInfo,
   getAllCategoryPaths,
@@ -9,6 +12,8 @@ import {
   getAllPosts,
 } from "@/lib/posts";
 import { CategoryInfo, PostContent } from "@/types/category";
+
+const POSTS_PER_PAGE = 5;
 
 interface PostPageProps {
   type: "category" | "post";
@@ -48,6 +53,21 @@ function CategoryPage({
   categoryInfo: CategoryInfo;
   categoryPath: string;
 }) {
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // URL 쿼리에서 페이지 번호 가져오기
+  useEffect(() => {
+    const page = parseInt(router.query.page as string) || 1;
+    setCurrentPage(page);
+  }, [router.query.page]);
+
+  // 현재 페이지의 포스트들 계산
+  const totalPages = Math.ceil(categoryInfo.posts.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const endIndex = startIndex + POSTS_PER_PAGE;
+  const currentPosts = categoryInfo.posts.slice(startIndex, endIndex);
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8">
@@ -70,7 +90,12 @@ function CategoryPage({
             );
           })}
         </nav>
-        <h1 className="text-3xl font-bold">{categoryInfo.name}</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold">{categoryInfo.name}</h1>
+          <div className="text-sm text-gray-500">
+            총 {categoryInfo.posts.length}개의 포스트
+          </div>
+        </div>
       </div>
 
       {/* 하위 카테고리 */}
@@ -101,7 +126,7 @@ function CategoryPage({
         <div>
           <h2 className="text-xl font-semibold mb-4">포스트</h2>
           <div className="space-y-4">
-            {categoryInfo.posts.map((post) => (
+            {currentPosts.map((post) => (
               <article
                 key={post.slug}
                 className="border-b border-gray-200 pb-4"
@@ -137,6 +162,23 @@ function CategoryPage({
                 </Link>
               </article>
             ))}
+          </div>
+
+          {/* 페이지네이션 */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            baseUrl={`/post/${categoryPath}`}
+          />
+
+          {/* 페이지 정보 */}
+          <div className="text-center text-sm text-gray-500 mt-4">
+            {categoryInfo.posts.length > 0 && (
+              <span>
+                {startIndex + 1}-{Math.min(endIndex, categoryInfo.posts.length)}{" "}
+                / {categoryInfo.posts.length} 포스트
+              </span>
+            )}
           </div>
         </div>
       )}
