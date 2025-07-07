@@ -2,7 +2,7 @@
 
 title: "useState & useEffect로 condition 상태 업데이트 시 주의점"
 date: "2025-07-07"
-tags: \["React", "useState", "useEffect", "State Management"]
+tags: ["React", "useState", "useEffect", "State Management"]
 summary: "useEffect에서 조건부로만 setState를 호출할 때 발생할 수 있는 상태 동기화 누락 문제와 이를 방지하는 개선 방법을 정리합니다."
 -----------------------------------------------------------------------------------------
 

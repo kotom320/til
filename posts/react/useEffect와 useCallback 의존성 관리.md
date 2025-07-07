@@ -2,7 +2,7 @@
 
 title: "useEffect와 useCallback 의존성 관리"
 date: "2025-06-04"
-tags: \["React", "useEffect", "useCallback", "Hooks"]
+tags: ["React", "useEffect", "useCallback", "Hooks"]
 summary: "useEffect 내에서 함수를 호출할 때 의존성 배열에 함수를 포함하고, 해당 함수를 useCallback으로 감싸며 발생할 수 있는 무한 루프 등 부작용을 정리합니다."
 ----------------------------------------------------------------------------------------------------------
 

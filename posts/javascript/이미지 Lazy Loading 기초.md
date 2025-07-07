@@ -1,10 +1,8 @@
 ---
-
 title: "이미지 Lazy Loading 기초"
 date: "2025-06-06"
-tags: \["JavaScript", "Performance", "Images", "Lazy Loading"]
-summary: "브라우저 네이티브 `loading=\"lazy\"` 속성을 사용하여 간단히 이미지 로딩 최적화하는 방법을 정리합니다."
-
+tags: ["JavaScript", "Performance", "Images", "Lazy Loading"]
+summary: '브라우저 네이티브 `loading="lazy"` 속성을 사용하여 간단히 이미지 로딩 최적화하는 방법을 정리합니다.'
 ---
 
 ## 배경

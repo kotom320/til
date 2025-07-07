@@ -2,7 +2,7 @@
 
 title: "TanStack Query 과도한 API 호출 방지하기"
 date: "2025-06-23"
-tags: \["TanStack Query", "API", "Performance", "Refetch"]
+tags: ["TanStack Query", "API", "Performance", "Refetch"]
 summary: "TanStack Query 사용 시 자동 리패칭으로 인한 불필요한 API 호출 상황과 이를 제어하는 주요 옵션을 정리합니다."
 --------------------------------------------------------------------------------
 

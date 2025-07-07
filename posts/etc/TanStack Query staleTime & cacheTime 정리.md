@@ -2,7 +2,7 @@
 
 title: "TanStack Query staleTime & cacheTime 정리"
 date: "2025-07-03"
-tags: \["TanStack Query", "Caching", "staleTime", "cacheTime", "TIL"]
+tags: ["TanStack Query", "Caching", "staleTime", "cacheTime", "TIL"]
 summary: "staleTime과 cacheTime의 기본 동작, 함께 쓰면서 겪은 문제, cacheTime은 자동 리패칭에 영향을 주지 않는다는 점을 사례와 함께 정리합니다."
 -----------------------------------------------------------------------------------------------------
 

@@ -2,7 +2,7 @@
 
 title: "Shell Alias 설정 방법"
 date: "2025-06-24"
-tags: \["Shell", "Alias", "Terminal", "bash", "zsh"]
+tags: ["Shell", "Alias", "Terminal", "bash", "zsh"]
 summary: "자주 사용하는 명령어를 단축하기 위한 Shell alias 설정 방법을 Bash와 Zsh 환경에서 정리합니다."
 ------------------------------------------------------------------------
 

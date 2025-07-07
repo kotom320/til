@@ -2,7 +2,7 @@
 
 title: "React에서 Chart.js 파이 차트 만들기"
 date: "2025-06-01"
-tags: \["React", "Chart.js", "react-chartjs-2", "TypeScript"]
+tags: ["React", "Chart.js", "react-chartjs-2", "TypeScript"]
 summary: "React 애플리케이션에서 Chart.js와 react-chartjs-2를 사용하여 파이 차트를 구현하는 과정을 정리합니다."
 --------------------------------------------------------------------------------
 

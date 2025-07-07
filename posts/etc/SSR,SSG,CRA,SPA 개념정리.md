@@ -2,7 +2,7 @@
 
 title: "SSR / SSG / CSR / SPA 개념 정리"
 date: "2025-06-19"
-tags: \["Web", "Rendering", "SSR", "SSG", "CSR", "SPA", "Next.js"]
+tags: ["Web", "Rendering", "SSR", "SSG", "CSR", "SPA", "Next.js"]
 summary: "SSR, SSG, CSR, SPA의 정의와 주요 차이점을 한눈에 비교하고, Next.js 및 React 예시로 각 전략의 사용법을 정리합니다."
 ------------------------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ---
 title: "CSS 기호 및 공백/붙여쓰기 규칙 정리"
 date: "2025-06-25"
-tags: \["CSS", "Syntax", "Style Guide", "TIL"]
+tags: ["CSS", "Syntax", "Style Guide", "TIL"]
 summary: "CSS에서 사용되는 선택자 기호와 선언 블록, 값 단위별 공백·붙여쓰기 규칙을 일관성 있게 정리합니다."
 ---
 

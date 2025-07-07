@@ -2,7 +2,7 @@
 
 title: "noopener noreferrer로 보안 및 프라이버시 강화하기"
 date: "2025-06-17"
-tags: \["HTML", "Security", "Privacy", "TIL"]
+tags: ["HTML", "Security", "Privacy", "TIL"]
 summary: "target='_blank' 사용 시 rel='noopener noreferrer'를 함께 써야 하는 이유와 효과를 정리합니다."
 --------------------------------------------------------------------------------------
 

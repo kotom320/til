@@ -1,7 +1,7 @@
 ---
 title: "npm vs yarn vs pnpm 비교"
 date: "2025-06-24"
-tags: \["JavaScript", "Package Manager", "npm", "yarn", "pnpm"]
+tags: ["JavaScript", "Package Manager", "npm", "yarn", "pnpm"]
 summary: "npm, Yarn, pnpm의 특징과 장단점을 비교하여 올바른 패키지 매니저 선택 기준을 정리합니다."
 ---
 

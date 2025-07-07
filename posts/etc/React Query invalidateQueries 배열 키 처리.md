@@ -2,7 +2,7 @@
 
 title: "React Query invalidateQueries 배열 키 처리 이슈"
 date: "2025-06-17"
-tags: \["React Query", "invalidateQueries", "TIL"]
+tags: ["React Query", "invalidateQueries", "TIL"]
 summary: "queryClient.invalidateQueries에 배열로 여러 쿼리 키를 넘겼을 때, 의도한 대로 모두 초기화되지 않는 동작을 확인하고 해결 방법을 정리합니다."
 -------------------------------------------------------------------------------------------------------
 

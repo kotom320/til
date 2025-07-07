@@ -1,7 +1,7 @@
 ---
 title: "useState vs useReducer 비교"
 date: "2025-06-09"
-tags: \["React", "Hooks", "useState", "useReducer"]
+tags: ["React", "Hooks", "useState", "useReducer"]
 summary: "React Hooks인 useState와 useReducer의 사용 목적, 차이점, 객체 상태 관리 시의 장단점을 비교 정리합니다."
 ---
 
