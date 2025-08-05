@@ -57,7 +57,7 @@ function CategoryItem({
         {hasChildren && node.children && (
           <div
             className={`overflow-hidden transition-all duration-300 ease-in-out ${
-              isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+              isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
             }`}
           >
             <div className="mt-1">
@@ -92,8 +92,8 @@ function CategoryItem({
 
 export default function Sidebar({ categories }: SidebarProps) {
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 p-4 overflow-y-auto">
-      <div className="mb-6">
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
+      <div className="p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">카테고리</h2>
         <Link
           href="/"
@@ -102,11 +102,11 @@ export default function Sidebar({ categories }: SidebarProps) {
           전체 포스트
         </Link>
       </div>
-      <nav className="space-y-1">
+      <div className="flex-1 overflow-y-auto p-4 space-y-1">
         {categories.map((category) => (
           <CategoryItem key={category.path} node={category} />
         ))}
-      </nav>
+      </div>
     </aside>
   );
 }
