@@ -163,7 +163,15 @@ export function getCategoryTree(
     console.warn(`Error reading directory ${baseDir}:`, error);
   }
 
-  return nodes;
+  // 폴더가 먼저 나오도록 정렬
+  return nodes.sort((a, b) => {
+    // 폴더가 파일보다 먼저 나오도록
+    if (a.isDirectory && !b.isDirectory) return -1;
+    if (!a.isDirectory && b.isDirectory) return 1;
+    
+    // 둘 다 폴더이거나 둘 다 파일인 경우 이름순 정렬
+    return a.name.localeCompare(b.name);
+  });
 }
 
 /**
@@ -215,7 +223,7 @@ export function getCategoryInfo(categoryPath: string): CategoryInfo {
     posts: posts.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     ),
-    subcategories,
+    subcategories: subcategories.sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
 
