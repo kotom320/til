@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { CategoryNode } from "@/types/category";
 import { ChevronRight, ChevronDown, X } from "lucide-react";
+import SidebarSearchBar from "./SidebarSearchBar";
 
 interface SidebarProps {
   categories: CategoryNode[];
@@ -116,11 +117,14 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
         </div>
         <Link
           href="/"
-          className="block py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          className="block py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors mb-4"
           onClick={onClose}
         >
           전체 포스트
         </Link>
+
+        {/* 검색바 */}
+        <SidebarSearchBar />
       </div>
 
       {/* 카테고리 목록 */}

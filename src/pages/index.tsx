@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getAllPostsClient } from "@/lib/posts-client";
 import { PostMeta } from "@/types/category";
 import Pagination from "@/components/Pagination";
+import SearchBar from "@/components/SearchBar";
 
 const POSTS_PER_PAGE = 5;
 
@@ -64,6 +65,11 @@ export default function Home() {
         <div className="text-sm text-gray-500">
           총 {posts.length}개의 포스트
         </div>
+      </div>
+
+      {/* 검색바 */}
+      <div className="mb-8">
+        <SearchBar className="max-w-2xl" />
       </div>
 
       {/* 포스트 목록 */}

@@ -32,3 +32,14 @@ export interface CategoryInfo {
   posts: PostMeta[];
   subcategories: CategoryInfo[];
 }
+
+export interface SearchResult {
+  post: PostMeta;
+  matchedFields: {
+    title?: boolean;
+    content?: boolean;
+    tags?: boolean;
+    summary?: boolean;
+  };
+  relevanceScore: number;
+}
