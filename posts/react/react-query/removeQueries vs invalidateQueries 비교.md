@@ -4,7 +4,7 @@ title: "React Query: removeQueries vs invalidateQueries 비교"
 date: "2025-08-07"
 tags: ["React Query", "removeQueries", "invalidateQueries", "Cache"]
 summary: "React Query의 removeQueries와 invalidateQueries 메서드 동작 차이와 사용 시나리오를 정리합니다."
------------------------------------------------------------------------------------
+---
 
 ## 1. 개요
 

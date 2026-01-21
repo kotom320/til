@@ -4,7 +4,8 @@ title: "reduce vs map: 무한 스크롤에서의 렌더링 문제"
 date: "2025-10-02"
 tags: [React, Rendering, InfinityScroll, TIL]
 summary: "reduce를 사용한 JSX 누적 렌더링이 무한 로딩 문제를 유발했고, map으로 전환해 해결한 경험"
--------------------------------------------------------------------
+
+---
 
 ## 배경
 

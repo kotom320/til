@@ -4,7 +4,8 @@ title: "Git Merge 전략 정리"
 date: "2025-09-29"
 tags: [Git, Merge, Branch]
 summary: "Git에서 사용하는 다양한 merge 전략(Fast-Forward, Recursive, --no-ff, Squash, Rebase)을 정리하고, 각 전략의 히스토리를 그래프로 시각화하여 이해를 돕습니다."
-----------------------------------------------------------------------------------------------------------------------------
+
+---
 
 ## 1. Fast-Forward Merge (FF)
 

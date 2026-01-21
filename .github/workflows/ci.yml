@@ -31,6 +31,9 @@ jobs:
 
       - name: Typecheck
         run: pnpm typecheck
-
+      
+      - name: Validate posts
+        run: pnpm validate:posts
+        
       - name: Build
         run: pnpm build

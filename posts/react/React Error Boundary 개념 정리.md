@@ -4,7 +4,7 @@ title: "React Error Boundary 개념 정리"
 date: "2025-08-06"
 tags: ["React", "Error Boundary", "Error Handling", "TIL"]
 summary: "React의 Error Boundary 기능을 통해 컴포넌트 트리 내 오류를 포착하고, UI 붕괴를 방지하는 개념과 구현 방법을 정리합니다."
------------------------------------------------------------------------------------------
+---
 
 ## 배경
 

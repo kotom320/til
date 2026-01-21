@@ -4,7 +4,7 @@ title: "use strict 정리"
 date: "2025-08-21"
 tags: ["JavaScript", "use strict", "ES6"]
 summary: "JavaScript의 use strict 모드의 역할과 필요성을 정리합니다."
------------------------------------------------------
+---
 
 ## use strict란?
 

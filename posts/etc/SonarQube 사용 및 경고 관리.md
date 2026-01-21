@@ -5,10 +5,6 @@ tags: ["SonarQube", "Static Analysis", "Code Quality"]
 summary: "SonarQube를 효과적으로 사용하기 위한 목적, 경고 처리 기준, NOSONAR 사용 가이드를 정리합니다."
 ---
 
-# SonarQube 사용 및 경고 관리
-
----
-
 ## 1. 우리가 SonarQube를 사용하는 이유
 
 - **코드 품질 자동 점검**  

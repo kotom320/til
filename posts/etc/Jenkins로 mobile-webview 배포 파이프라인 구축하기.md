@@ -4,7 +4,8 @@ title: "Jenkins로 mobile-webview 배포 파이프라인 구축하기"
 date: "2025-12-04"
 tags: ["Jenkins", "CI/CD", "Pipeline", "S3", "CloudFront"]
 summary: "AWS CodePipeline이 사라진 상황에서 Jenkins 기반으로 mobile-webview 배포 파이프라인을 재구축한 과정을 정리한다."
-------------------------------------------------------------------------------------------
+
+---
 
 ## 배경
 

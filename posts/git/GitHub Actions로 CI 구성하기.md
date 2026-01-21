@@ -4,7 +4,8 @@ title: "GitHub Actions로 CI 구성하기"
 date: "2025-12-17"
 tags: ["github-actions", "ci", "pnpm", "nextjs", "typescript"]
 summary: "개인 TIL 프로젝트에 GitHub Actions 기반 CI를 도입하며, 최소한의 품질 게이트(lint/typecheck/build)를 구성한 과정을 정리한다."
-----------------------------------------------------------------------------------------------------
+
+---
 
 ## 1. 문제 인지 / 상황 설명
 

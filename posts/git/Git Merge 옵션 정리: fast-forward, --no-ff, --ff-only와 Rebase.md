@@ -4,7 +4,7 @@ title: "Git Merge 옵션 정리: fast-forward, --no-ff, --ff-only와 Rebase"
 date: "2025-08-04"
 tags: ["Git", "Merge", "Rebase", "Workflow"]
 summary: "Git merge 시 fast-forward(FF)와 --no-ff, --ff-only 옵션의 차이, 그리고 rebase 전략을 비교합니다."
------------------------------------------------------------------------------------------
+---
 
 ## 배경
 

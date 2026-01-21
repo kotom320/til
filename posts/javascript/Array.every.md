@@ -4,7 +4,8 @@ title: "JavaScript Array.prototype.every의 빈 배열 처리"
 date: "2025-06-03"
 tags: ["JavaScript", "Array", "Method Behavior"]
 summary: "Array.prototype.every 메서드가 빈 배열에 대해 true를 반환하는 이유와 사용 시 주의점을 정리합니다."
-------------------------------------------------------------------------------
+
+---
 
 ## 배경
 

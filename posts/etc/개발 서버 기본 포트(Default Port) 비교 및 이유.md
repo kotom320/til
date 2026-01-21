@@ -4,7 +4,7 @@ title: "개발 서버 기본 포트(Default Port) 비교 및 이유"
 date: "2025-07-15"
 tags: ["Node", "Dev Server", "Port", "Create React App", "Next.js", "Vite", "Vue CLI"]
 summary: "Create React App, Next.js, Vite, Vue CLI 등 주요 프레임워크가 사용하는 기본 개발 서버 포트의 차이와 배경, 변경 방법을 정리합니다."
--------------------------------------------------------------------------------------------------------
+---
 
 ## 배경
 

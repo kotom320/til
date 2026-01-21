@@ -4,7 +4,7 @@ title: "Signals 개념: React vs Vue3 사용법 비교"
 date: "2025-08-06"
 tags: ["Reactivity", "Signals", "React", "Vue3"]
 summary: "Signals(신호) 기반 반응성 모델을 React와 Vue3에서 어떻게 사용하고 있는지, React에서의 최적화 기법과 Vue3의 내장 reactivity를 비교 정리합니다."
--------------------------------------------------------------------------------------------------------------
+---
 
 ## 1. Signals 개요
 
