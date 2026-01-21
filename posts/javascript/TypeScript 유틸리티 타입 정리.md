@@ -4,7 +4,8 @@ title: "TypeScript 유틸리티 타입 정리 — Partial, Required, Readonly, R
 date: "2025-08-21"
 tags: ["TypeScript", "Utility Types"]
 summary: "자주 쓰이는 유틸리티 타입 6가지를 개념, 시그니처, 사용 예와 함께 정리합니다."
---------------------------------------------------------
+
+---
 
 ## 개요
 

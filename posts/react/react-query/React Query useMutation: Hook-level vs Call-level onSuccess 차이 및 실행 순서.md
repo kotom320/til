@@ -4,7 +4,7 @@ title: "React Query useMutation: Hook-level vs Call-level onSuccess 차이 및 �
 date: "2025-07-30"
 tags: ["React Query", "useMutation", "onSuccess", "Mutation", "Callbacks"]
 summary: "useMutation 훅 옵션의 onSuccess과 mutate 호출 옵션의 onSuccess 차이점과, 콜백이 호출되는 순서를 정리합니다."
------------------------------------------------------------------------------------------
+---
 
 ## 개요
 

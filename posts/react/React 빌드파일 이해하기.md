@@ -4,7 +4,8 @@ title: "React 빌드(dist) 파일 이해하기"
 date: "2025-09-23"
 tags: [React, Build, Babel, Webpack, Vite, Dist]
 summary: "React 프로젝트에서 작성한 JSX/TSX 코드가 빌드 과정을 거쳐 dist 폴더의 최종 HTML/CSS/JS로 변환되는 과정을 정리합니다."
-------------------------------------------------------------------------------------------
+
+---
 
 ## 배경
 

@@ -4,7 +4,7 @@ title: "Object.entries vs Object.fromEntries 비교"
 date: "2025-06-10"
 tags: ["JavaScript", "Object", "ES2019"]
 summary: "Object.entries와 Object.fromEntries의 기능·용도·예제를 비교하여 키-값 변환 패턴을 정리합니다."
--------------------------------------------------------------------------------
+---
 
 ## 배경
 

@@ -4,7 +4,8 @@ title: "CSS Flexbox - flex-direction과 메인축/교차축 정리"
 date: "2025-08-22"
 tags: ["CSS", "Flexbox", "Layout"]
 summary: "flex-direction에 따른 메인축과 교차축 개념을 정리하고, align-items와 align-self의 차이를 설명합니다."
-------------------------------------------------------------------------------------
+
+---
 
 ## 1. flex-direction에 따른 메인축과 교차축
 

@@ -4,7 +4,7 @@ title: "Git Push vs Publish Branch 이해하기"
 date: "2025-08-01"
 tags: ["Git", "VSCode", "GitHub Desktop", "Branch Management"]
 summary: "로컬 브랜치와 원격 브랜치 생성 시 ‘push’와 ‘publish’의 차이, upstream 설정, VSCode/GitHub Desktop에서의 동작 방식을 정리합니다."
----------------------------------------------------------------------------------------------------------
+---
 
 ## 배경
 

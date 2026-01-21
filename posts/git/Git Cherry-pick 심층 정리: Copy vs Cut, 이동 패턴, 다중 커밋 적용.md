@@ -4,7 +4,7 @@ title: "Git Cherry-pick 심층 정리: Copy vs Cut, 이동 패턴, 다중 커밋
 date: "2025-08-04"
 tags: ["Git", "Cherry-pick", "Rebase", "Workflow"]
 summary: "`git cherry-pick`의 동작(복사 여부), 완전한 이동(커밋 잘라내기) 구현법, 여러 커밋 동시 적용 방법을 한 번에 정리합니다."
------------------------------------------------------------------------------------------
+---
 
 ## 1. Cherry-pick: 복사(Copy)인가, 잘라내기(Cut)인가?
 

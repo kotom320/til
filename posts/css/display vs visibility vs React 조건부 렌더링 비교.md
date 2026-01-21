@@ -4,7 +4,7 @@ title: "CSS display/visibility vs React 조건부 렌더링 비교"
 date: "2025-07-08"
 tags: ["CSS", "React", "Rendering", "Visibility"]
 summary: "CSS의 display/visibility 처리 방식과 React의 조건부 렌더링(isVisible && ...)을 비교하여 렌더링 및 DOM 상태 차이를 정리합니다."
---------------------------------------------------------------------------------------------------------------
+---
 
 ## 배경
 

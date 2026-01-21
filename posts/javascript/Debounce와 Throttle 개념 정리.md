@@ -4,7 +4,7 @@ title: "Debounce와 Throttle 개념 정리"
 date: "2025-07-10"
 tags: ["JavaScript", "Performance", "Debounce", "Throttle"]
 summary: "연속 이벤트 처리 시 불필요한 함수 호출을 방지하는 Debounce와 Throttle의 정의, 동작 원리, 코드 예시를 정리합니다."
-------------------------------------------------------------------------------------
+---
 
 ## 배경
 
