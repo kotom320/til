@@ -1,10 +1,10 @@
 ---
 
-title: "CloudFront Invalidation 범위를 /*에서 /index.html로 변경했을 때 지표 변화 분석"
+title: "CloudFront Invalidation 범위 최적화: /* → /index.html로 Data transfer 완화"
 date: "2026-01-21"
 tags: ["cloudfront", "s3", "cache-control", "cdn", "invalidation", "vite"]
 summary: "배포 시 CloudFront Invalidation을 /*에서 /index.html로 축소한 뒤, Requests는 유지되지만 Data transfer가 상대적으로 낮아지는 구간이 관측되었다. 이를 캐시 HIT/MISS 관점에서 해석하고 배포 전략 개선 방향을 정리한다."
--------------------------------------------------------------------------------------------------------
+---
 
 ## 1. 문제 인지 (상황 설명)
 
@@ -13,8 +13,6 @@ CloudFront 비용이 점진적으로 증가하고 있었고, 비용 항목 중 *
 현재 프로젝트는 **Vite 기반 빌드 환경**이며, JS/CSS 등 정적 자산은 **해시 기반 파일명**으로 생성된다. 그럼에도 전체 캐시 무효화 전략이 유지되고 있었고, 이 전략이 여전히 필요한지 검증이 필요하다고 판단했다.
 
 이에 개발 환경에서 먼저 Invalidation 범위를 `/*`에서 `/index.html`로 축소하는 실험을 진행했다.
-
----
 
 ## 2. 문제 정의 및 원인 분석
 
@@ -46,8 +44,6 @@ Invalidation 범위를 `/index.html`로 제한하면 동작 방식이 달라진�
 - 하지만 많은 요청이 Edge 캐시 HIT로 처리되면, 오리진(S3)에서 다시 가져오는 데이터가 줄어 **Data transfer는 상대적으로 낮아질 수 있다**.
 
 실제로 정책 변경 이후, Requests는 많지만 Data transfer는 상대적으로 낮게 유지되는 구간이 관측되었다. 이는 전체 캐시 무효화로 인해 발생하던 **강제 MISS 구간이 완화**되었음을 의미한다.
-
----
 
 ## 3. 해결 방법 (코드 예시)
 
@@ -85,16 +81,12 @@ withAWS(region: 'ap-northeast-2', credentials: 'iam/jenkins') {
 }
 ```
 
----
-
 ## 4. 결과 (관찰 결과 요약)
 
 - Invalidation 변경 이후에도 **Requests는 기존과 유사한 수준**으로 발생했다.
 - 그러나 Requests 증가가 곧바로 Data transfer 증가로 이어지지 않는 **구간이 관측**되었다.
 - 이는 요청이 오리진(S3)으로 전달되지 않고 CloudFront Edge 캐시에서 **HIT로 처리되는 비율이 증가**했음을 시사한다.
 - 기존의 `/*` Invalidation 전략은 배포 직후 **대규모 MISS를 강제로 유발**했을 가능성이 높다.
-
----
 
 ## 5. 결론 (배운 점)
 
