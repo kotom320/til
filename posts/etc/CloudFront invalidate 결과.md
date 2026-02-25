@@ -54,7 +54,9 @@ CloudFront 비용이 점진적으로 증가하고 있었고, 비용 항목 중 *
 
 ### 3.2 Requests / Data transfer 관측
 
-![CloudFront Requests / Data transfer 비교(변경 전/후)](/images/cloudfront_usage.png)
+> 아래 그래프는 실측 원본이 아닌, 날짜/식별자를 제거한 정규화 예시(패턴 설명용)다.
+
+![CloudFront Requests / Data transfer 비교(정규화, Case A/Case B)](/images/cloudfront_usage.png)
 
 - Requests 패턴은 두 케이스 간 큰 차이가 없었다.
 - Data transfer 역시 전체적인 형태가 유사했으며,

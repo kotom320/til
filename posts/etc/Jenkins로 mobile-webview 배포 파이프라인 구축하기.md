@@ -1,24 +1,24 @@
 ---
 
-title: "Jenkins로 mobile-webview 배포 파이프라인 구축하기"
+title: "Jenkins로 WebView 프로젝트 배포 파이프라인 구축하기"
 date: "2025-12-04"
 tags: ["Jenkins", "CI/CD", "Pipeline", "S3", "CloudFront"]
-summary: "AWS CodePipeline이 사라진 상황에서 Jenkins 기반으로 mobile-webview 배포 파이프라인을 재구축한 과정을 정리한다."
+summary: "AWS CodePipeline이 사라진 상황에서 Jenkins 기반으로 WebView 프로젝트 배포 파이프라인을 재구축한 과정을 정리한다."
 
 ---
 
 ## 배경
 
-기존에는 AWS CodePipeline을 통해 `mobile-webview` 프로젝트가 배포되고 있었지만, 어느 순간 파이프라인 전체가 사라져버렸다. 프로젝트 특성상 1년에 한두 번만 배포되는 레거시에 가까운 서비스라, 복잡한 자동화보다는 **단순하고 실수 없는 파이프라인**을 만드는 것이 우선 목표였다.
+기존에는 AWS CodePipeline을 통해 WebView 프로젝트가 배포되고 있었지만, 어느 순간 파이프라인 전체가 사라져버렸다. 프로젝트 특성상 1년에 한두 번만 배포되는 레거시에 가까운 서비스라, 복잡한 자동화보다는 **단순하고 실수 없는 파이프라인**을 만드는 것이 우선 목표였다.
 
-또한, 레포 루트가 아닌 `blue-web` 폴더에서 실제 웹앱이 존재하며, dev/alpha/prod 용 S3 버킷이 모두 분리되어 있어 **버킷명을 잘못 설정하면 상용 배포 사고가 날 위험**이 있었다.
+또한, 레포 루트가 아닌 특정 서브 디렉토리에 실제 웹앱이 존재하며, dev/alpha/prod 용 S3 버킷이 모두 분리되어 있어 **버킷명을 잘못 설정하면 상용 배포 사고가 날 위험**이 있었다.
 
 ---
 
 ## 목표
 
 1. Jenkins에서 브랜치만 다르게 설정해 dev/alpha/prod 환경을 공통 파이프라인으로 처리
-2. 레포 클론 후 `blue-web` 내부에서 install & build 수행
+2. 레포 클론 후 실제 웹앱 디렉토리 내부에서 install & build 수행
 3. prod 환경에서만 CloudFront Invalidation 동작
 4. 전체 파이프라인은 최대한 단순하게 유지
 
@@ -35,10 +35,10 @@ TARGET_BRANCH = 'master'   // develop / alpha / master
 BUILD_ENV     = 'prod'     // dev / alpha / prod
 ```
 
-### 2. 실제 프로젝트는 `blue-web` 폴더에 존재
+### 2. 실제 프로젝트는 서브 디렉토리에 존재
 
 ```groovy
-dir('blue-web') {
+dir('apps/web') {
   npm ci
   npm run ${BUILD_ENV}-build
 }
@@ -79,7 +79,7 @@ if (BUILD_ENV == 'prod') {
 
 - dev/alpha/prod 환경 모두 공통 파이프라인 사용
 - prod만 CloudFront invalidation 적용
-- 실제 앱 위치인 `blue-web`를 반영하여 정확한 경로에서 빌드
+- 실제 앱 위치(서브 디렉토리)를 반영하여 정확한 경로에서 빌드
 - 불필요한 자동화 최소화 → 단순하고 직관적인 설계
 
 “레거시” 기준으로는 가장 실용적인 수준의 파이프라인이라고 평가할 수 있다.
