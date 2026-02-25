@@ -45,20 +45,18 @@ CloudFront 비용이 점진적으로 증가하고 있었고, 비용 항목 중 *
 
 ### 3.1 실험 조건
 
-| 날짜 | Invalidation 범위 |
-|----|----------------|
-| 1월 26일 | `/*` |
-| 2월 3일 | `/index.html` |
+| 케이스 | Invalidation 범위 |
+| --- | --- |
+| 변경 전 | `/*` |
+| 변경 후 | `/index.html` |
 
-두 날짜 모두 동일한 서비스, 동일한 배포 구조에서 측정했다.
+두 케이스는 동일한 서비스, 동일한 배포 구조에서 측정했다.
 
 ### 3.2 Requests / Data transfer 관측
 
-![배포 지표 (2026-01-26, Invalidation: /*)](/images/cloudfront0126.png)
+![CloudFront Requests / Data transfer 비교(변경 전/후)](/images/cloudfront_usage.png)
 
-![배포 지표 (2026-02-03, Invalidation: /index.html)](/images/cloudfront0203.png)
-
-- Requests 패턴은 두 날짜 간 큰 차이가 없었다.
+- Requests 패턴은 두 케이스 간 큰 차이가 없었다.
 - Data transfer 역시 전체적인 형태가 유사했으며,
   `/index.html` Invalidation 이후 **유의미하게 감소했다고 단정하기는 어려웠다.**
 
