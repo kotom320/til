@@ -1,0 +1,200 @@
+---
+title: "rrweb-player로 세션 재생 뷰어 만들기"
+date: "2026-04-02"
+tags: ["React", "rrweb-player", "TIL"]
+summary: "rrweb-player를 React에 연동하고, 콘솔/네트워크 로그를 재생 시간에 맞게 동기화하는 방법을 정리합니다."
+---
+
+## Viewer의 역할
+
+QA 기록방 Viewer는 저장된 세션을 재생하는 React 19 SPA다. URL의 `?recordId=` 파라미터로 세션을 특정하고, 다음 세 가지를 한 화면에서 보여준다.
+
+- rrweb-player로 화면 재생
+- 재생 시각에 동기화된 콘솔 로그
+- 재생 시각에 동기화된 네트워크 요청/응답
+
+`recordId`가 없으면 세션 목록이 표시된다. 별도 라우터 없이 `window.history.pushState`로 두 화면을 전환하는 단순한 구조다.
+
+---
+
+## rrweb-player 마운트
+
+rrweb-player는 Svelte 컴포넌트라서 React와 직접 통합되지 않는다. `useEffect` 안에서 DOM 요소에 직접 마운트한다.
+
+```typescript
+const playerRef = useRef<HTMLDivElement>(null);
+const playerInstanceRef = useRef<rrwebPlayer | null>(null);
+const [currentTime, setCurrentTime] = useState(0);
+
+useEffect(() => {
+  if (!Array.isArray(events) || events.length <= 1 || !playerRef.current) return;
+
+  // 이전 인스턴스 제거 (recordId가 바뀔 때 재마운트)
+  playerRef.current.innerHTML = "";
+
+  const player = new rrwebPlayer({
+    target: playerRef.current,
+    props: {
+      events: events as { type: number; data: unknown; timestamp: number }[],
+      width: 800,
+      height: 600,
+      showController: true,
+    },
+  });
+
+  playerInstanceRef.current = player;
+
+  // 재생 시각 추적 — 이 이벤트가 로그 동기화의 핵심
+  player.addEventListener(
+    "ui-update-current-time",
+    ({ payload }: { payload: number }) => setCurrentTime(payload),
+  );
+}, [events]);
+```
+
+`ui-update-current-time` 이벤트는 rrweb-player가 재생 시각을 업데이트할 때마다 발생한다. `payload`가 ms 단위의 현재 재생 시각이다. 이 값을 `currentTime` state로 관리하면 콘솔/네트워크 로그가 자동으로 동기화된다.
+
+한 가지 주의할 점은 부모 컴포넌트에서 `key={recordId}`를 명시해야 한다는 것이다. `recordId`가 바뀔 때 컴포넌트가 완전히 언마운트/리마운트돼야 이전 세션의 플레이어와 상태가 깔끔하게 정리된다.
+
+---
+
+## 청크 데이터 재조립
+
+세션 데이터는 SDK에서 300,000자 단위로 쪼개어 저장된다. Viewer에서는 이를 이어 붙인 뒤 lz-string으로 압축 해제한다.
+
+```typescript
+async function loadSession(recordId: string) {
+  // 1. 메타 + 로그
+  const { data: session } = await supabase
+    .from("sessions")
+    .select("*")
+    .eq("id", recordId)
+    .single();
+
+  // 2. rrweb 이벤트 청크 조립
+  const { data: chunks } = await supabase
+    .from("session_chunks")
+    .select("chunk_index, data")
+    .eq("session_id", recordId)
+    .order("chunk_index");
+
+  // 청크를 순서대로 이어 붙인 뒤 압축 해제
+  const joined = (chunks ?? []).map((c) => c.data).join("");
+  const decompressed = LZString.decompressFromUTF16(joined);
+  const events = JSON.parse(decompressed);
+
+  // 3. 콘솔/네트워크 로그 압축 해제
+  const consoleLogs = session.console_logs_compressed
+    ? JSON.parse(LZString.decompressFromUTF16(session.console_logs_compressed))
+    : [];
+
+  const networkLogs = session.network_logs_compressed
+    ? JSON.parse(LZString.decompressFromUTF16(session.network_logs_compressed))
+    : [];
+
+  return { events, consoleLogs, networkLogs, session };
+}
+```
+
+---
+
+## 로그 하이라이트 로직 (±1500ms)
+
+로그와 재생 시각을 동기화하는 방법은 단순하다. 각 로그 엔트리의 타임스탬프(`ts`)와 현재 재생 시각(`currentTime`)을 비교해 세 가지 상태로 분류한다.
+
+| 상태 | 조건 | 표시 |
+|------|------|------|
+| 현재 (current) | `|ts - currentTime| <= 1500` | 청록색 배경 하이라이트 |
+| 과거 (past) | `ts <= currentTime + 200` | 기본 스타일 |
+| 미래 (future) | `ts > currentTime + 200` | opacity 0.3 디밍 |
+
+```typescript
+{consoleLogs.map((log, i) => {
+  const isFuture  = log.ts > currentTime + 200;
+  const isCurrent = !isFuture && Math.abs(log.ts - currentTime) <= 1500;
+
+  return (
+    <li
+      key={`${log.ts}-${i}`}
+      data-ts={log.ts}
+      style={{
+        borderLeft: `3px solid ${LEVEL_COLOR[log.level]}`,
+        opacity:    isFuture ? 0.3 : 1,
+        background: isCurrent ? "rgba(42, 193, 188, 0.12)" : "transparent",
+        transition: "opacity 0.2s, background 0.2s",
+        fontFamily: "monospace",
+        whiteSpace: "pre-wrap",
+        wordBreak:  "break-all",
+      }}
+    >
+      <span style={{ color: "#858585" }}>[{formatTs(log.ts)}]</span>
+      <span style={{ color: LEVEL_COLOR[log.level], marginLeft: 6 }}>
+        {log.level.toUpperCase()}
+      </span>
+      {" "}{log.args.join(" ")}
+    </li>
+  );
+})}
+```
+
+1500ms 창으로 "현재" 로그를 정의한 이유는 경험적이다. 500ms로 하면 너무 순간적으로 지나가서 눈에 잘 안 띄고, 3000ms로 하면 너무 오래 하이라이트돼서 "이게 지금 로그인가?" 헷갈린다. 1500ms가 적당한 균형이었다.
+
+`+200ms` 오프셋은 재생 타이머의 미세한 지연을 보정하기 위한 것이다. 정확히 `ts === currentTime`인 순간은 실제로 거의 없으므로, 약간의 여유를 둔다.
+
+---
+
+## 자동 스크롤
+
+`currentTime`이 바뀔 때마다 로그 목록을 스캔해서 현재 시각 이전의 마지막 로그로 스크롤한다.
+
+```typescript
+useEffect(() => {
+  const listRef = activeTab === "console" ? consoleListRef : networkListRef;
+  const logs    = activeTab === "console" ? consoleLogs    : networkLogs;
+  if (!listRef.current || logs.length === 0) return;
+
+  const items = listRef.current.querySelectorAll<HTMLElement>("li[data-ts]");
+  let targetEl: HTMLElement | null = null;
+
+  for (const el of items) {
+    if (Number(el.dataset.ts) <= currentTime) targetEl = el;
+    else break;
+  }
+
+  if (targetEl) targetEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}, [currentTime, activeTab, consoleLogs, networkLogs]);
+```
+
+`data-ts` 속성을 `<li>`에 달아두면 React state 없이 DOM 쿼리만으로 타겟 요소를 찾을 수 있다. 전체 로그 배열을 다시 순회하는 것보다 DOM 쿼리가 이 경우엔 더 직관적이었다.
+
+`scrollIntoView({ block: "nearest" })`를 사용한 이유는 로그가 이미 화면에 보이는 경우에는 불필요한 스크롤을 하지 않기 위해서다. `block: "center"`로 하면 이미 보이는 로그도 매번 가운데로 점프해서 거슬렸다.
+
+---
+
+## 타임스탬프 포맷
+
+재생 시각은 `M:SS` 또는 `H:MM:SS`로 표시한다.
+
+```typescript
+const formatTs = (ms: number): string => {
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+
+  if (h > 0) {
+    return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }
+  return `${m}:${String(s).padStart(2, "0")}`;
+};
+```
+
+---
+
+## 배운 점 정리
+
+- **rrweb-player는 Svelte 컴포넌트**: React와 직접 통합은 안 되고, `useEffect`에서 DOM 마운트 방식으로 사용한다. `target` prop에 DOM 요소를 넘기면 된다.
+- **`ui-update-current-time`**: 이 이벤트 없이는 로그 동기화가 불가능하다. rrweb-player의 문서에 잘 나와 있지 않아서 소스 코드를 직접 뒤져서 찾았다.
+- **±1500ms 하이라이트**: 경험적으로 정한 값이다. 너무 좁으면 눈에 안 띄고, 너무 넓으면 혼란스럽다.
+- **청크 조립 순서**: `chunk_index` 오름차순 정렬이 필수다. 순서가 틀리면 lz-string 압축 해제가 실패하거나 엉뚱한 데이터가 나온다.
+- **`key={recordId}`**: 세션이 바뀔 때 PlayerView를 완전히 리마운트해야 이전 상태가 남지 않는다.

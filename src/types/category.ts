@@ -33,6 +33,20 @@ export interface CategoryInfo {
   subcategories: CategoryInfo[];
 }
 
+export interface BlogMeta {
+  slug: string;
+  title: string;
+  date: string;
+  summary?: string;
+  description?: string;
+  tags?: string[];
+}
+
+export interface BlogPost {
+  meta: BlogMeta;
+  content: string;
+}
+
 export interface SearchResult {
   post: PostMeta;
   matchedFields: {

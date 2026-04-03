@@ -1,0 +1,171 @@
+---
+title: "Firebase Firestore 연동과 문서 크기 제한 문제"
+date: "2026-04-02"
+tags: ["Firebase", "Firestore", "TIL"]
+summary: "Firestore로 세션 데이터를 저장하다가 1MB 문서 크기 제한에 부딪히고, 청크 분리 전략으로 해결한 과정을 정리합니다."
+---
+
+## 처음에는 Firebase로 시작했다
+
+qaroom 프로토타입을 만들 때 백엔드로 Firebase를 선택했다. 이유는 단순했다. Firestore는 설정 없이 바로 쓸 수 있고, `addDoc` 하나로 데이터를 넣을 수 있다. BaaS 중에서 가장 빠르게 프로토타이핑할 수 있는 선택지였다.
+
+초기 설계는 이랬다.
+
+```
+sessions (컬렉션)
+└── {sessionId} (문서)
+    ├── eventsCompressed: string
+    ├── consoleLogsCompressed: string
+    ├── networkLogsCompressed: string
+    ├── userAgent: string
+    └── timestamp: Timestamp
+```
+
+SDK에서 저장할 때는 `addDoc`으로 한 방이었다.
+
+```typescript
+const docRef = await addDoc(collection(db, "sessions"), {
+  eventsCompressed: LZString.compressToUTF16(JSON.stringify(events)),
+  consoleLogsCompressed: LZString.compressToUTF16(JSON.stringify(consoleLogs)),
+  networkLogsCompressed: LZString.compressToUTF16(JSON.stringify(networkLogs)),
+  userAgent: navigator.userAgent,
+  timestamp: serverTimestamp(),
+});
+
+const viewerUrl = `https://viewer.example.com?recordId=${docRef.id}`;
+```
+
+Viewer에서는 `getDoc`으로 읽었다.
+
+```typescript
+const snap = await getDoc(doc(db, "sessions", sessionId));
+const data = snap.data();
+const events = JSON.parse(LZString.decompressFromUTF16(data.eventsCompressed));
+```
+
+---
+
+## 1MB 제한에 부딪히다
+
+로컬에서 잘 되던 게 특정 시나리오에서 터졌다.
+
+```
+FirebaseError: Document ... exceeds the maximum allowed size of 1,048,576 bytes.
+```
+
+Firestore의 단일 문서 크기 상한은 **1MB**다. rrweb 이벤트는 DOM 트리 전체를 JSON으로 직렬화한 데이터라 복잡한 화면에서 3분치를 압축해도 1MB가 넘었다.
+
+처음엔 압축 방법을 바꿔보려 했다.
+
+- `compressToBase64` → 오히려 더 커짐
+- `compressToEncodedURIComponent` → 역시 더 커짐
+
+당연한 결과였다. 데이터 자체가 크면 어떤 방식으로 인코딩해도 한계가 있다. 근본적인 해결책은 데이터를 분산 저장하는 것뿐이었다.
+
+---
+
+## 청크 서브컬렉션으로 해결
+
+Firestore의 서브컬렉션을 활용해 이벤트 데이터를 쪼개 저장했다.
+
+```
+sessions
+└── {sessionId}
+    ├── chunkCount: 3
+    ├── consoleLogsCompressed: string
+    ├── networkLogsCompressed: string
+    └── chunks (서브컬렉션)
+        ├── 0: { index: 0, data: "..." }   // 0~300,000자
+        ├── 1: { index: 1, data: "..." }   // 300,000~600,000자
+        └── 2: { index: 2, data: "..." }   // 600,000~900,000자
+```
+
+저장 코드:
+
+```typescript
+const CHUNK_CHARS = 300_000;
+const compressed = LZString.compressToUTF16(JSON.stringify(events));
+const chunkCount = Math.ceil(compressed.length / CHUNK_CHARS);
+
+// 메인 문서 (이벤트 제외)
+const docRef = await addDoc(collection(db, "sessions"), {
+  consoleLogsCompressed,
+  networkLogsCompressed,
+  userAgent: navigator.userAgent,
+  chunkCount,
+  timestamp: serverTimestamp(),
+});
+
+// 청크 서브컬렉션에 분산 저장
+const chunksCol = collection(db, "sessions", docRef.id, "chunks");
+for (let i = 0; i < chunkCount; i++) {
+  await addDoc(chunksCol, {
+    index: i,
+    data: compressed.slice(i * CHUNK_CHARS, (i + 1) * CHUNK_CHARS),
+  });
+}
+```
+
+Viewer에서 복원:
+
+```typescript
+const chunksCol = collection(db, "sessions", sessionId, "chunks");
+const q = query(chunksCol, orderBy("index"));
+const snap = await getDocs(q);
+
+const joined = snap.docs.map((d) => d.data().data as string).join("");
+const events = JSON.parse(LZString.decompressFromUTF16(joined));
+```
+
+청크를 `index` 기준으로 정렬해서 이어 붙이는 게 핵심이다. 순서가 틀리면 압축 해제가 실패한다.
+
+---
+
+## Firebase Hosting 배포
+
+Viewer는 Vite 빌드 결과물을 Firebase Hosting에 올렸다. 설정이 간단하다.
+
+`firebase.json`:
+
+```json
+{
+  "hosting": {
+    "public": "packages/viewer/dist",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      { "source": "**", "destination": "/index.html" }
+    ]
+  }
+}
+```
+
+`rewrites`의 `"**" → "/index.html"` 설정이 SPA에 필수다. 없으면 `?recordId=abc123`으로 직접 접근했을 때 404가 난다.
+
+배포:
+
+```bash
+cd packages/viewer && pnpm build
+firebase deploy --only hosting
+```
+
+---
+
+## Firebase를 떠난 이유
+
+프로토타입은 잘 동작했지만 세 가지 한계가 있었다.
+
+**복잡한 쿼리 불가.** 나중에 심각도, 완료 여부로 목록을 필터링하고 싶었는데, Firestore는 복합 조건 쿼리에 복합 인덱스를 별도로 생성해야 한다. SQL이면 `WHERE severity = 'high' AND done = false`로 끝날 일이 인덱스 설정 화면을 따로 열어야 했다.
+
+**Cloud Functions 유료.** Jira 연동을 위해 서버사이드 함수가 필요한데, Firebase의 Cloud Functions는 Blaze 플랜(유료)에서만 외부 API 호출이 허용된다.
+
+**서브컬렉션 구조의 불편함.** 청크를 하나씩 `await addDoc`으로 저장해야 해서 청크 수만큼 네트워크 왕복이 발생한다.
+
+이 세 가지 이유로 Supabase로 마이그레이션했다. 다음 글에서 마이그레이션 과정을 정리한다.
+
+---
+
+## 배운 점
+
+- Firestore 1MB 제한은 생각보다 빨리 부딪힌다. rrweb처럼 이벤트 데이터가 큰 경우에는 초기 설계부터 청크 분리를 고려해야 한다.
+- SPA를 Firebase Hosting에 올릴 때 `rewrites` 설정을 반드시 확인하자.
+- `addDoc`으로 반복 저장할 때는 `for await` 루프로 순차 실행하면 네트워크 요청이 직렬화된다. `Promise.all`로 병렬 처리하면 빠르지만 Firestore 쓰기 속도 제한에 걸릴 수 있다.
