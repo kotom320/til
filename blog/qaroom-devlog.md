@@ -14,6 +14,9 @@ tags:
   - SDK
   - Jira
   - Firebase
+series:
+  name: QA 기록방 개발기
+  order: 0
 ---
 
 ## 아이디어의 시작

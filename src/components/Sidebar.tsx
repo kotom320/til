@@ -161,7 +161,7 @@ function BlogList({ onClose }: { onClose?: () => void }) {
   const isCurrent = (slug: string) => router.asPath === `/blog/${slug}`;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* 전체 보기 */}
       <Link
         href="/blog"
@@ -180,116 +180,87 @@ function BlogList({ onClose }: { onClose?: () => void }) {
         전체 글 보기
       </Link>
 
-      {/* 시리즈 */}
+      {/* 시리즈 — 항상 펼친 상태 */}
       {Array.from(seriesMap.entries()).map(([name, list]) => (
-        <SeriesSection
+        <BlogSection
           key={name}
-          name={name}
+          label={name}
+          count={list.length}
           posts={list}
           isCurrent={isCurrent}
           onClose={onClose}
+          showOrder
         />
       ))}
 
       {/* 단편 */}
       {standalone.length > 0 && (
-        <div>
-          <p
-            className="px-3 mb-1.5 text-[11px] font-mono uppercase tracking-wider"
-            style={{ color: "var(--text-subtle)" }}
-          >
-            Articles
-          </p>
-          <div className="space-y-0.5">
-            {standalone.map((post) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                onClick={onClose}
-                className="block py-1.5 px-3 rounded-md text-xs leading-snug transition-colors line-clamp-2"
-                style={
-                  isCurrent(post.slug)
-                    ? {
-                        background: "var(--accent-soft)",
-                        color: "var(--accent)",
-                        fontWeight: 600,
-                      }
-                    : { color: "var(--text-muted)" }
-                }
-                title={post.title}
-              >
-                {post.title}
-              </Link>
-            ))}
-          </div>
-        </div>
+        <BlogSection
+          label="단편 글"
+          count={standalone.length}
+          posts={standalone}
+          isCurrent={isCurrent}
+          onClose={onClose}
+        />
       )}
     </div>
   );
 }
 
-function SeriesSection({
-  name,
+function BlogSection({
+  label,
+  count,
   posts,
   isCurrent,
   onClose,
+  showOrder = false,
 }: {
-  name: string;
+  label: string;
+  count: number;
   posts: BlogMeta[];
   isCurrent: (slug: string) => boolean;
   onClose?: () => void;
+  showOrder?: boolean;
 }) {
-  const anyCurrent = posts.some((p) => isCurrent(p.slug));
-  const [isExpanded, setIsExpanded] = useState(anyCurrent);
-
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => setIsExpanded((v) => !v)}
-        className="flex w-full items-center justify-between py-1.5 px-3 rounded-md text-[11px] font-mono uppercase tracking-wider transition-colors"
+      <div
+        className="flex items-baseline justify-between px-3 mb-1.5"
         style={{ color: "var(--text-subtle)" }}
       >
-        <span className="flex items-center gap-1.5">
-          {isExpanded ? (
-            <ChevronDown size={12} />
-          ) : (
-            <ChevronRight size={12} />
-          )}
-          Series · {name}
-        </span>
-        <span>{posts.length}편</span>
-      </button>
-      {isExpanded && (
-        <div className="mt-1 space-y-0.5">
-          {posts.map((post) => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              onClick={onClose}
-              className="block py-1.5 px-3 pl-7 rounded-md text-xs leading-snug transition-colors line-clamp-2"
-              style={
-                isCurrent(post.slug)
-                  ? {
-                      background: "var(--accent-soft)",
-                      color: "var(--accent)",
-                      fontWeight: 600,
-                    }
-                  : { color: "var(--text-muted)" }
-              }
-              title={post.title}
-            >
+        <span className="text-[11px] font-semibold tracking-wide">{label}</span>
+        <span className="text-[10px] font-mono">{count}</span>
+      </div>
+      <div className="space-y-0.5">
+        {posts.map((post) => (
+          <Link
+            key={post.slug}
+            href={`/blog/${post.slug}`}
+            onClick={onClose}
+            className="flex items-start gap-2 py-1.5 px-3 rounded-md text-xs leading-snug transition-colors"
+            style={
+              isCurrent(post.slug)
+                ? {
+                    background: "var(--accent-soft)",
+                    color: "var(--accent)",
+                    fontWeight: 600,
+                  }
+                : { color: "var(--text-muted)" }
+            }
+            title={post.title}
+          >
+            {showOrder && post.series && (
               <span
-                className="mr-2 font-mono"
+                className="shrink-0 font-mono text-[10px] pt-0.5"
                 style={{ color: "var(--text-subtle)" }}
               >
-                {String(post.series?.order ?? 0).padStart(2, "0")}
+                {String(post.series.order).padStart(2, "0")}
               </span>
-              {post.title}
-            </Link>
-          ))}
-        </div>
-      )}
+            )}
+            <span className="line-clamp-2">{post.title}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
