@@ -1,21 +1,85 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
-import MarkdownViewer from "@/components/MarkdownViewer";
-import { getAllBlogSlugs, getBlogPostHtml } from "@/lib/blog";
+import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
+import {
+  getAllBlogPosts,
+  getAllBlogSlugs,
+  getBlogPostMdx,
+} from "@/lib/blog";
 import { BlogMeta } from "@/types/category";
+import Callout from "@/components/mdx/Callout";
+import ProjectLink from "@/components/mdx/ProjectLink";
+import Figure from "@/components/mdx/Figure";
+import SeriesNav from "@/components/mdx/SeriesNav";
+import { useEffect, useRef } from "react";
 
 interface BlogPostPageProps {
   meta: BlogMeta;
-  html: string;
+  mdxSource: MDXRemoteSerializeResult;
   textLength: number;
+  seriesSiblings: BlogMeta[];
 }
+
+// MDX에서 직접 사용할 수 있는 컴포넌트
+const mdxComponents = {
+  Callout,
+  ProjectLink,
+  Figure,
+};
 
 export default function BlogPostPage({
   meta,
-  html,
+  mdxSource,
   textLength,
+  seriesSiblings,
 }: BlogPostPageProps) {
   const readingMinutes = Math.max(1, Math.round(textLength / 500));
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  // 렌더 후 shiki 코드 블록에 언어 라벨/복사 버튼 주입 (TIL MarkdownViewer와 동일 로직)
+  useEffect(() => {
+    const root = bodyRef.current;
+    if (!root) return;
+    root.querySelectorAll("pre.shiki").forEach((pre) => {
+      if (pre.parentElement?.classList.contains("code-block")) return;
+      const lang =
+        pre.getAttribute("data-language") ??
+        pre.querySelector("code")?.className.match(/language-([\w-]+)/)?.[1] ??
+        "text";
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-block";
+      const head = document.createElement("div");
+      head.className = "code-block__head";
+      const langLabel = document.createElement("span");
+      langLabel.textContent = lang;
+      head.appendChild(langLabel);
+      const copyBtn = document.createElement("button");
+      copyBtn.type = "button";
+      copyBtn.className = "code-block__copy";
+      copyBtn.setAttribute("aria-label", "코드 복사");
+      copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy</span>`;
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(pre.textContent ?? "");
+          copyBtn.classList.add("copied");
+          copyBtn.querySelector("span")!.textContent = "Copied";
+          setTimeout(() => {
+            copyBtn.classList.remove("copied");
+            copyBtn.querySelector("span")!.textContent = "Copy";
+          }, 1500);
+        } catch {}
+      });
+      head.appendChild(copyBtn);
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(head);
+      wrapper.appendChild(pre);
+    });
+
+    root.querySelectorAll("a[href^='http']").forEach((a) => {
+      a.setAttribute("target", "_blank");
+      a.setAttribute("rel", "noopener noreferrer");
+    });
+  }, [mdxSource]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -77,9 +141,19 @@ export default function BlogPostPage({
         )}
       </header>
 
+      {/* 포트폴리오 cross-link 배지 */}
+      {meta.portfolio && (
+        <ProjectLink slug={meta.portfolio.slug} title={meta.portfolio.title} />
+      )}
+
+      {/* 시리즈 네비게이션 */}
+      {meta.series && (
+        <SeriesNav current={meta} siblings={seriesSiblings} />
+      )}
+
       {/* 본문 */}
-      <article>
-        <MarkdownViewer html={html} />
+      <article ref={bodyRef} className="prose-kr">
+        <MDXRemote {...mdxSource} components={mdxComponents} />
       </article>
 
       {/* 하단 네비게이션 */}
@@ -109,6 +183,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const slug = params?.slug as string;
-  const { meta, html, textLength } = await getBlogPostHtml(slug);
-  return { props: { meta, html, textLength } };
+  const { meta, mdxSource, textLength } = await getBlogPostMdx(slug);
+
+  // 같은 시리즈 포스트 수집
+  const seriesSiblings = meta.series
+    ? getAllBlogPosts().filter((p) => p.series?.name === meta.series?.name)
+    : [];
+
+  return { props: { meta, mdxSource, textLength, seriesSiblings } };
 };

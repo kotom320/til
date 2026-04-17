@@ -4,6 +4,9 @@ date: "2026-04-03"
 summary: "rrweb과 Supabase로 팀 QA 도구를 직접 만든 과정 — 아이디어 발굴부터 Firebase 1MB 벽, fetch 래핑 함정, Jira CORS 해결까지"
 description: "컨퍼런스에서 얻은 아이디어를 실제 팀 도구로 만들기까지. rrweb, Supabase, Edge Function을 선택한 이유와 그 과정에서 마주한 트러블슈팅을 기록합니다."
 tags: ["Side Project", "rrweb", "Supabase", "SDK", "Jira", "Firebase"]
+portfolio:
+  slug: "qa-recording-sdk"
+  title: "세션 레코딩 SDK"
 ---
 
 ## 아이디어의 시작
