@@ -26,6 +26,16 @@ function CategoryItem({
   const isParentActive = router.asPath.startsWith(node.path + "/");
   const hasChildren = node.children && node.children.length > 0;
 
+  const activeStyle = {
+    background: "var(--accent-soft)",
+    color: "var(--accent)",
+  } as const;
+  const parentStyle = {
+    background: "var(--bg-muted)",
+    color: "var(--text-body)",
+  } as const;
+  const baseStyle = { color: "var(--text-muted)" } as const;
+
   const toggleExpand = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsExpanded(!isExpanded);
@@ -36,14 +46,12 @@ function CategoryItem({
       <div>
         <button
           onClick={toggleExpand}
-          className={`flex w-full items-center justify-between py-2 px-3 rounded-lg transition-colors ${
-            isActive
-              ? "bg-blue-100 text-blue-700 font-medium"
-              : isParentActive
-              ? "bg-gray-50 text-gray-700"
-              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-          }`}
-          style={{ paddingLeft: `${level * 12 + 12}px` }}
+          className="flex w-full items-center justify-between py-2 px-3 rounded-lg transition-colors"
+          style={{
+            ...(isActive ? activeStyle : isParentActive ? parentStyle : baseStyle),
+            paddingLeft: `${level * 12 + 12}px`,
+            fontWeight: isActive ? 600 : 400,
+          }}
         >
           <span className="flex items-center">
             {hasChildren && (
@@ -84,14 +92,12 @@ function CategoryItem({
     <div>
       <Link
         href={node.path}
-        className={`block py-2 px-3 rounded-lg transition-colors ${
-          isActive
-            ? "bg-blue-100 text-blue-700 font-medium"
-            : isParentActive
-            ? "bg-gray-50 text-gray-700"
-            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-        }`}
-        style={{ paddingLeft: `${level * 12 + 12}px` }}
+        className="block py-2 px-3 rounded-lg transition-colors"
+        style={{
+          ...(isActive ? activeStyle : isParentActive ? parentStyle : baseStyle),
+          paddingLeft: `${level * 12 + 12}px`,
+          fontWeight: isActive ? 600 : 400,
+        }}
         onClick={onClose}
       >
         {node.name}
@@ -105,43 +111,72 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
   const isBlog = router.pathname.startsWith("/blog");
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
+    <aside
+      className="w-64 flex flex-col h-screen"
+      style={{
+        background: "var(--bg-base)",
+        borderRight: "1px solid var(--border-subtle)",
+      }}
+    >
       {/* 헤더 */}
-      <div className="p-4 border-b border-gray-200">
+      <div
+        className="p-4 border-b"
+        style={{ borderColor: "var(--border-subtle)" }}
+      >
         <div className="flex items-center justify-between mb-4">
-          <Link href="/" className="text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors" onClick={onClose}>
+          <Link
+            href="/"
+            className="text-lg font-bold transition-colors"
+            style={{ color: "var(--text-strong)" }}
+            onClick={onClose}
+          >
             dongwook.dev
           </Link>
           {/* 모바일 닫기 버튼 */}
           <button
             onClick={onClose}
-            className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-gray-600 hover:bg-gray-100"
+            aria-label="메뉴 닫기"
+            className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md"
+            style={{ color: "var(--text-muted)" }}
           >
             <X size={20} />
           </button>
         </div>
 
         {/* 섹션 탭 */}
-        <div className="flex gap-1 p-1 bg-gray-100 rounded-lg mb-4">
+        <div
+          className="flex gap-1 p-1 rounded-lg mb-4"
+          style={{ background: "var(--bg-muted)" }}
+        >
           <Link
             href="/"
             onClick={onClose}
-            className={`flex-1 text-center py-1.5 text-sm font-medium rounded-md transition-colors ${
+            className="flex-1 text-center py-1.5 text-sm font-medium rounded-md transition-colors"
+            style={
               !isBlog
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
+                ? {
+                    background: "var(--bg-base)",
+                    color: "var(--text-strong)",
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                  }
+                : { color: "var(--text-subtle)" }
+            }
           >
             TIL
           </Link>
           <Link
             href="/blog"
             onClick={onClose}
-            className={`flex-1 text-center py-1.5 text-sm font-medium rounded-md transition-colors ${
+            className="flex-1 text-center py-1.5 text-sm font-medium rounded-md transition-colors"
+            style={
               isBlog
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
+                ? {
+                    background: "var(--bg-base)",
+                    color: "var(--text-strong)",
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                  }
+                : { color: "var(--text-subtle)" }
+            }
           >
             Blog
           </Link>
@@ -159,11 +194,16 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
             <Link
               href="/blog"
               onClick={onClose}
-              className={`block py-2 px-3 rounded-lg transition-colors ${
+              className="block py-2 px-3 rounded-lg transition-colors"
+              style={
                 router.pathname === "/blog"
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+                  ? {
+                      background: "var(--accent-soft)",
+                      color: "var(--accent)",
+                      fontWeight: 600,
+                    }
+                  : { color: "var(--text-muted)" }
+              }
             >
               전체 글 보기
             </Link>
@@ -174,16 +214,25 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
             <Link
               href="/"
               onClick={onClose}
-              className={`block py-2 px-3 rounded-lg transition-colors mb-2 ${
+              className="block py-2 px-3 rounded-lg transition-colors mb-2"
+              style={
                 router.pathname === "/"
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+                  ? {
+                      background: "var(--accent-soft)",
+                      color: "var(--accent)",
+                      fontWeight: 600,
+                    }
+                  : { color: "var(--text-muted)" }
+              }
             >
               전체 포스트
             </Link>
             {categories.map((category) => (
-              <CategoryItem key={category.path} node={category} onClose={onClose} />
+              <CategoryItem
+                key={category.path}
+                node={category}
+                onClose={onClose}
+              />
             ))}
           </>
         )}

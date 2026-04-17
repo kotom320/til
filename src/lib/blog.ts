@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { BlogMeta, BlogPost } from "@/types/category";
+import { markdownToHtml } from "./markdown";
 
 const BLOG_DIR = path.join(process.cwd(), "blog");
 
@@ -43,6 +44,15 @@ export function getBlogPost(slug: string): BlogPost {
     },
     content,
   };
+}
+
+export async function getBlogPostHtml(
+  slug: string
+): Promise<{ meta: BlogMeta; html: string; textLength: number }> {
+  const post = getBlogPost(slug);
+  const html = await markdownToHtml(post.content);
+  const textLength = post.content.replace(/\s/g, "").length;
+  return { meta: post.meta, html, textLength };
 }
 
 export function getAllBlogSlugs(): string[] {

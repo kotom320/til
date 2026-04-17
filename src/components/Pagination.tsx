@@ -52,13 +52,27 @@ export default function Pagination({
 
   const pageNumbers = getPageNumbers();
 
+  const baseBtn =
+    "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors border";
+  const inactiveStyle = {
+    color: "var(--text-muted)",
+    background: "var(--bg-base)",
+    borderColor: "var(--border-subtle)",
+  } as const;
+  const activeStyle = {
+    color: "#ffffff",
+    background: "var(--accent)",
+    borderColor: "var(--accent)",
+  } as const;
+
   return (
     <nav className="flex items-center justify-center space-x-1 mt-8">
       {/* 이전 페이지 */}
       {currentPage > 1 && (
         <Link
           href={`${baseUrl}?page=${currentPage - 1}`}
-          className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors"
+          className={baseBtn}
+          style={inactiveStyle}
         >
           <ChevronLeft size={16} className="mr-1" />
           이전
@@ -71,7 +85,8 @@ export default function Pagination({
           return (
             <span
               key={`ellipsis-${index}`}
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-500"
+              className="flex items-center px-3 py-2 text-sm font-medium"
+              style={{ color: "var(--text-subtle)" }}
             >
               <MoreHorizontal size={16} />
             </span>
@@ -85,11 +100,8 @@ export default function Pagination({
           <Link
             key={pageNum}
             href={`${baseUrl}?page=${pageNum}`}
-            className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-              isCurrent
-                ? "bg-blue-600 text-white border border-blue-600"
-                : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700"
-            }`}
+            className={baseBtn}
+            style={isCurrent ? activeStyle : inactiveStyle}
           >
             {pageNum}
           </Link>
@@ -100,7 +112,8 @@ export default function Pagination({
       {currentPage < totalPages && (
         <Link
           href={`${baseUrl}?page=${currentPage + 1}`}
-          className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors"
+          className={baseBtn}
+          style={inactiveStyle}
         >
           다음
           <ChevronRight size={16} className="ml-1" />

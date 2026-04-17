@@ -1,2 +1,324 @@
 @import "tailwindcss";
-@import "highlight.js/styles/github.css";
+@import "pretendard/dist/web/variable/pretendardvariable.css";
+
+@theme {
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo",
+    "Noto Sans KR", sans-serif;
+  --font-mono:
+    "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ---------- Design Tokens ---------- */
+:root {
+  --bg-base: #ffffff;
+  --bg-subtle: #fafafa;
+  --bg-muted: #f4f4f5;
+  --bg-inline-code: #f1f5f9;
+  --bg-code-block: #f8fafc;
+  --bg-card: #ffffff;
+
+  --text-strong: #0f172a;
+  --text-body: #1f2937;
+  --text-muted: #525b6b;
+  --text-subtle: #6b7280;
+  --text-inline-code: #be185d;
+
+  --border-subtle: #e5e7eb;
+  --border-default: #d1d5db;
+  --border-code: #e2e8f0;
+
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: #dbeafe;
+  --accent-softer: #eff6ff;
+
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --bg-base: #0b0d12;
+  --bg-subtle: #111319;
+  --bg-muted: #1a1d25;
+  --bg-inline-code: #1e2330;
+  --bg-code-block: #0f1117;
+  --bg-card: #111319;
+
+  --text-strong: #f4f4f5;
+  --text-body: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --text-subtle: #71717a;
+  --text-inline-code: #f472b6;
+
+  --border-subtle: #262a33;
+  --border-default: #323742;
+  --border-code: #1f2330;
+
+  --accent: #60a5fa;
+  --accent-hover: #93c5fd;
+  --accent-soft: #1e3a8a33;
+  --accent-softer: #1e3a8a1a;
+
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+html {
+  background: var(--bg-base);
+  color: var(--text-body);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "ss02";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-base);
+  color: var(--text-body);
+  letter-spacing: -0.003em;
+}
+
+/* ---------- Markdown Typography (.prose-kr) ---------- */
+.prose-kr {
+  color: var(--text-body);
+  line-height: 1.85;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+}
+
+.prose-kr h1,
+.prose-kr h2,
+.prose-kr h3,
+.prose-kr h4 {
+  color: var(--text-strong);
+  letter-spacing: -0.02em;
+  scroll-margin-top: 5rem;
+}
+.prose-kr h1 {
+  font-size: 1.875rem; /* 30 */
+  font-weight: 700;
+  margin: 3rem 0 1.25rem;
+}
+.prose-kr h2 {
+  font-size: 1.5rem; /* 24 */
+  font-weight: 700;
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.prose-kr h3 {
+  font-size: 1.25rem; /* 20 */
+  font-weight: 600;
+  margin: 2rem 0 0.75rem;
+}
+.prose-kr h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.prose-kr p {
+  margin: 1rem 0;
+  line-height: 1.85;
+}
+
+.prose-kr a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--border-default);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 150ms;
+}
+.prose-kr a:hover {
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
+.prose-kr strong {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.prose-kr ul,
+.prose-kr ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+.prose-kr ul {
+  list-style: disc;
+}
+.prose-kr ol {
+  list-style: decimal;
+}
+.prose-kr li {
+  margin: 0.375rem 0;
+  line-height: 1.85;
+}
+.prose-kr li::marker {
+  color: var(--text-subtle);
+}
+.prose-kr li > ul,
+.prose-kr li > ol {
+  margin: 0.25rem 0;
+}
+
+.prose-kr blockquote {
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-softer);
+  color: var(--text-muted);
+  font-style: italic;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+.prose-kr blockquote > p {
+  margin: 0.25rem 0;
+}
+
+.prose-kr hr {
+  margin: 2.5rem 0;
+  border: 0;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.prose-kr table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 1.5rem 0;
+  display: block;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+}
+.prose-kr thead {
+  background: var(--bg-muted);
+}
+.prose-kr th {
+  padding: 0.625rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-strong);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.prose-kr td {
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.prose-kr tr:last-child td {
+  border-bottom: 0;
+}
+
+.prose-kr img {
+  border-radius: 0.5rem;
+  max-width: 100%;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border-subtle);
+}
+
+/* ---------- Inline code ---------- */
+.prose-kr :not(pre) > code {
+  background: var(--bg-inline-code);
+  color: var(--text-inline-code);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+  font-family: var(--font-mono);
+}
+
+/* ---------- Shiki Dual Theme + Code Block Chrome ---------- */
+.prose-kr pre.shiki {
+  background: var(--bg-code-block) !important;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  margin: 0;
+  border-radius: 0;
+}
+.prose-kr pre.shiki code,
+.prose-kr pre.shiki span {
+  color: var(--shiki-light) !important;
+}
+.prose-kr pre.shiki span {
+  font-style: var(--shiki-light-font-style) !important;
+  font-weight: var(--shiki-light-font-weight) !important;
+  text-decoration: var(--shiki-light-text-decoration) !important;
+}
+html[data-theme="dark"] .prose-kr pre.shiki code,
+html[data-theme="dark"] .prose-kr pre.shiki span {
+  color: var(--shiki-dark) !important;
+}
+html[data-theme="dark"] .prose-kr pre.shiki span {
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* 코드 블록 래퍼 — JS가 pre.shiki를 감싸는 구조로 래핑한다. */
+.code-block {
+  position: relative;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border-code);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--bg-code-block);
+}
+.code-block__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: var(--bg-muted);
+  border-bottom: 1px solid var(--border-code);
+  font-size: 0.75rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+}
+.code-block__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  color: var(--text-subtle);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  transition: color 150ms, background 150ms;
+}
+.code-block__copy:hover {
+  color: var(--text-body);
+  background: var(--bg-base);
+}
+.code-block__copy.copied {
+  color: #16a34a;
+}
+
+/* ---------- Scrollbar ---------- */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 999px;
+  border: 2px solid var(--bg-base);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}

@@ -7,6 +7,7 @@ import {
   CategoryInfo,
   CategoryNode,
 } from "@/types/category";
+import { markdownToHtml } from "./markdown";
 
 const POSTS_DIR = path.join(process.cwd(), "posts");
 
@@ -121,6 +122,24 @@ export function getPostBySlug(category: string, slug: string): PostContent {
       summary: data.summary,
     },
   };
+}
+
+/**
+ * 포스트를 가져오면서 본문을 HTML로 변환하여 반환합니다.
+ * 읽기 시간 추정을 위해 원본 텍스트 길이도 함께 반환합니다.
+ */
+export async function getPostHtml(
+  category: string,
+  slug: string
+): Promise<{
+  html: string;
+  textLength: number;
+  frontmatter: PostContent["frontmatter"];
+}> {
+  const { content, frontmatter } = getPostBySlug(category, slug);
+  const html = await markdownToHtml(content);
+  const textLength = content.replace(/\s/g, "").length;
+  return { html, textLength, frontmatter };
 }
 
 /**

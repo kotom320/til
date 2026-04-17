@@ -45,12 +45,23 @@ export default function Home() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">전체 포스트</h1>
+        <h1
+          className="text-3xl font-bold mb-8"
+          style={{ color: "var(--text-strong)" }}
+        >
+          전체 포스트
+        </h1>
         <div className="space-y-6">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="animate-pulse">
-              <div className="h-6 bg-gray-200 rounded mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+              <div
+                className="h-6 rounded mb-2"
+                style={{ background: "var(--bg-muted)" }}
+              />
+              <div
+                className="h-4 rounded w-1/3"
+                style={{ background: "var(--bg-muted)" }}
+              />
             </div>
           ))}
         </div>
@@ -61,8 +72,13 @@ export default function Home() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">전체 포스트</h1>
-        <div className="text-sm text-gray-500">
+        <h1
+          className="text-3xl font-bold tracking-tight"
+          style={{ color: "var(--text-strong)" }}
+        >
+          전체 포스트
+        </h1>
+        <div className="text-sm" style={{ color: "var(--text-subtle)" }}>
           총 {posts.length}개의 포스트
         </div>
       </div>
@@ -77,31 +93,45 @@ export default function Home() {
         {currentPosts.map((post) => (
           <article
             key={`${post.category}/${post.slug}`}
-            className="border-b border-gray-200 pb-6"
+            className="border-b pb-6"
+            style={{ borderColor: "var(--border-subtle)" }}
           >
             <Link href={`/post/${post.category}/${post.slug}`}>
               <div className="group">
-                <h2 className="text-xl font-semibold text-blue-600 group-hover:text-blue-800 transition-colors">
+                <h2
+                  className="text-xl font-semibold group-hover:underline transition-colors"
+                  style={{ color: "var(--accent)" }}
+                >
                   {post.title}
                 </h2>
-                <div className="text-sm text-gray-500 mt-1">
+                <div
+                  className="text-sm mt-1.5"
+                  style={{ color: "var(--text-subtle)" }}
+                >
                   <span>{post.category}</span>
-                  <span className="mx-2">•</span>
+                  <span className="mx-2">·</span>
                   <span>{post.date}</span>
                 </div>
                 {post.summary && (
-                  <p className="text-gray-700 mt-2 line-clamp-2">
+                  <p
+                    className="mt-2 line-clamp-2 leading-relaxed"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     {post.summary}
                   </p>
                 )}
                 {post.tags &&
                   Array.isArray(post.tags) &&
                   post.tags.length > 0 && (
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex flex-wrap gap-1.5 mt-3">
                       {post.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded"
+                          className="px-2 py-0.5 text-xs rounded"
+                          style={{
+                            background: "var(--bg-muted)",
+                            color: "var(--text-muted)",
+                          }}
                         >
                           {tag}
                         </span>
@@ -122,7 +152,10 @@ export default function Home() {
       />
 
       {/* 페이지 정보 */}
-      <div className="text-center text-sm text-gray-500 mt-4">
+      <div
+        className="text-center text-sm mt-4"
+        style={{ color: "var(--text-subtle)" }}
+      >
         {posts.length > 0 && (
           <span>
             {startIndex + 1}-{Math.min(endIndex, posts.length)} / {posts.length}{" "}
