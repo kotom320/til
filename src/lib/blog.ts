@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
-import { BlogMeta, BlogPortfolioLink, BlogPost } from "@/types/category";
+import { BlogMeta, BlogPost } from "@/types/category";
 import { serializeMdx } from "./mdx";
 
 const BLOG_DIR = path.join(process.cwd(), "blog");
@@ -34,9 +34,6 @@ function toMeta(slug: string, data: Record<string, unknown>): BlogMeta {
   if (typeof data.description === "string")
     meta.description = data.description;
   if (Array.isArray(data.tags)) meta.tags = data.tags as string[];
-  if (data.portfolio && typeof data.portfolio === "object") {
-    meta.portfolio = data.portfolio as BlogPortfolioLink;
-  }
   if (data.series && typeof data.series === "object") {
     meta.series = data.series as { name: string; order: number };
   }

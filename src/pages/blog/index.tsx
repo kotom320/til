@@ -7,66 +7,47 @@ interface BlogIndexProps {
   posts: BlogMeta[];
 }
 
-interface Group {
-  id: string;
-  title: string;
-  subtitle?: string;
+interface SeriesGroup {
+  name: string;
   posts: BlogMeta[];
 }
 
 /**
- * Track A (포트폴리오 동반): portfolio.slug 별로 묶되, 시리즈는 대표글 한 편만 먼저 노출.
- * Track B (독립): portfolio 없는 글 모두.
+ * 블로그는 자기 완결적이다. 포트폴리오의 존재를 알지 못한다.
+ * 시리즈(연재) 포스트는 상단에 묶어 보여주고, 나머지는 최신순 단편 리스트.
  */
-function groupPosts(posts: BlogMeta[]): Group[] {
-  const portfolioGroups = new Map<string, Group>();
-  const independent: BlogMeta[] = [];
+function splitPosts(posts: BlogMeta[]): {
+  seriesGroups: SeriesGroup[];
+  standalone: BlogMeta[];
+} {
+  const seriesMap = new Map<string, BlogMeta[]>();
+  const standalone: BlogMeta[] = [];
 
   for (const post of posts) {
-    if (post.portfolio) {
-      const id = post.portfolio.slug;
-      if (!portfolioGroups.has(id)) {
-        portfolioGroups.set(id, {
-          id,
-          title: post.portfolio.title,
-          subtitle: "포트폴리오 확장편",
-          posts: [],
-        });
-      }
-      portfolioGroups.get(id)!.posts.push(post);
+    if (post.series) {
+      const list = seriesMap.get(post.series.name) ?? [];
+      list.push(post);
+      seriesMap.set(post.series.name, list);
     } else {
-      independent.push(post);
+      standalone.push(post);
     }
   }
 
-  // 각 그룹 내 정렬: 시리즈는 order 순, 아니면 date desc
-  for (const group of portfolioGroups.values()) {
-    group.posts.sort((a, b) => {
-      if (a.series && b.series && a.series.name === b.series.name) {
-        return a.series.order - b.series.order;
-      }
-      return a.date > b.date ? -1 : 1;
-    });
-  }
+  const seriesGroups: SeriesGroup[] = Array.from(seriesMap.entries()).map(
+    ([name, ps]) => ({
+      name,
+      posts: ps.sort(
+        (a, b) => (a.series?.order ?? 0) - (b.series?.order ?? 0)
+      ),
+    })
+  );
 
-  const groups: Group[] = [];
-  for (const g of portfolioGroups.values()) groups.push(g);
-
-  if (independent.length) {
-    groups.push({
-      id: "independent",
-      title: "독립 기술 아티클",
-      subtitle: "포트폴리오와 무관한 경험·패턴·트러블슈팅",
-      posts: independent,
-    });
-  }
-
-  return groups;
+  return { seriesGroups, standalone };
 }
 
 function PostRow({ post }: { post: BlogMeta }) {
   const seriesLabel = post.series
-    ? `${post.series.name} · ${String(post.series.order).padStart(2, "0")}`
+    ? `${String(post.series.order).padStart(2, "0")}화`
     : null;
 
   return (
@@ -112,7 +93,7 @@ function PostRow({ post }: { post: BlogMeta }) {
 }
 
 export default function BlogIndex({ posts }: BlogIndexProps) {
-  const groups = groupPosts(posts);
+  const { seriesGroups, standalone } = splitPosts(posts);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -124,7 +105,7 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
           Blog
         </h1>
         <p className="mt-2" style={{ color: "var(--text-muted)" }}>
-          포트폴리오에 담지 못한 기술적 깊이와 경험담을 정리합니다.
+          실무에서 겪은 문제와 구현 과정을 길게 풀어쓴 글을 모아둡니다.
         </p>
       </div>
 
@@ -137,29 +118,22 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
         </div>
       ) : (
         <div className="space-y-12">
-          {groups.map((group) => (
-            <section key={group.id}>
+          {/* 시리즈 그룹 */}
+          {seriesGroups.map((group) => (
+            <section key={group.name}>
               <header className="mb-4">
-                {group.subtitle && (
-                  <p
-                    className="text-xs font-mono uppercase tracking-wider mb-1"
-                    style={{ color: "var(--accent)" }}
-                  >
-                    {group.subtitle}
-                  </p>
-                )}
+                <p
+                  className="text-xs font-mono uppercase tracking-wider mb-1"
+                  style={{ color: "var(--accent)" }}
+                >
+                  Series · {group.posts.length}편
+                </p>
                 <h2
                   className="text-2xl font-bold tracking-tight"
                   style={{ color: "var(--text-strong)" }}
                 >
-                  {group.title}
+                  {group.name}
                 </h2>
-                <p
-                  className="text-xs mt-1"
-                  style={{ color: "var(--text-subtle)" }}
-                >
-                  {group.posts.length}편
-                </p>
               </header>
               <div>
                 {group.posts.map((post) => (
@@ -168,6 +142,31 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
               </div>
             </section>
           ))}
+
+          {/* 단편 글 */}
+          {standalone.length > 0 && (
+            <section>
+              <header className="mb-4">
+                <p
+                  className="text-xs font-mono uppercase tracking-wider mb-1"
+                  style={{ color: "var(--accent)" }}
+                >
+                  Articles · {standalone.length}편
+                </p>
+                <h2
+                  className="text-2xl font-bold tracking-tight"
+                  style={{ color: "var(--text-strong)" }}
+                >
+                  단편 글
+                </h2>
+              </header>
+              <div>
+                {standalone.map((post) => (
+                  <PostRow key={post.slug} post={post} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       )}
     </div>

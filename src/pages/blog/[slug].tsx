@@ -8,7 +8,6 @@ import {
 } from "@/lib/blog";
 import { BlogMeta } from "@/types/category";
 import Callout from "@/components/mdx/Callout";
-import ProjectLink from "@/components/mdx/ProjectLink";
 import Figure from "@/components/mdx/Figure";
 import SeriesNav from "@/components/mdx/SeriesNav";
 import { useEffect, useRef } from "react";
@@ -23,7 +22,6 @@ interface BlogPostPageProps {
 // MDX에서 직접 사용할 수 있는 컴포넌트
 const mdxComponents = {
   Callout,
-  ProjectLink,
   Figure,
 };
 
@@ -140,11 +138,6 @@ export default function BlogPostPage({
           </div>
         )}
       </header>
-
-      {/* 포트폴리오 cross-link 배지 */}
-      {meta.portfolio && (
-        <ProjectLink slug={meta.portfolio.slug} title={meta.portfolio.title} />
-      )}
 
       {/* 시리즈 네비게이션 */}
       {meta.series && (
