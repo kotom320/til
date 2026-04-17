@@ -1,10 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { CategoryNode } from "@/types/category";
+import { useEffect, useState } from "react";
+import {
+  BlogMeta,
+  CategoryNode,
+} from "@/types/category";
 import { ChevronRight, ChevronDown, X } from "lucide-react";
 import SidebarSearchBar from "./SidebarSearchBar";
+import { getAllBlogPostsClient } from "@/lib/posts-client";
 
 interface SidebarProps {
   categories: CategoryNode[];
@@ -106,6 +110,190 @@ function CategoryItem({
   );
 }
 
+function BlogList({ onClose }: { onClose?: () => void }) {
+  const router = useRouter();
+  const [posts, setPosts] = useState<BlogMeta[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    getAllBlogPostsClient().then((data) => {
+      if (active) {
+        setPosts(data);
+        setLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="h-5 rounded animate-pulse"
+            style={{ background: "var(--bg-muted)" }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // 시리즈와 단편 분리
+  const seriesMap = new Map<string, BlogMeta[]>();
+  const standalone: BlogMeta[] = [];
+  for (const p of posts) {
+    if (p.series) {
+      const list = seriesMap.get(p.series.name) ?? [];
+      list.push(p);
+      seriesMap.set(p.series.name, list);
+    } else {
+      standalone.push(p);
+    }
+  }
+  for (const list of seriesMap.values()) {
+    list.sort((a, b) => (a.series?.order ?? 0) - (b.series?.order ?? 0));
+  }
+
+  const isCurrent = (slug: string) => router.asPath === `/blog/${slug}`;
+
+  return (
+    <div className="space-y-4">
+      {/* 전체 보기 */}
+      <Link
+        href="/blog"
+        onClick={onClose}
+        className="block py-2 px-3 rounded-lg transition-colors text-sm"
+        style={
+          router.pathname === "/blog"
+            ? {
+                background: "var(--accent-soft)",
+                color: "var(--accent)",
+                fontWeight: 600,
+              }
+            : { color: "var(--text-muted)" }
+        }
+      >
+        전체 글 보기
+      </Link>
+
+      {/* 시리즈 */}
+      {Array.from(seriesMap.entries()).map(([name, list]) => (
+        <SeriesSection
+          key={name}
+          name={name}
+          posts={list}
+          isCurrent={isCurrent}
+          onClose={onClose}
+        />
+      ))}
+
+      {/* 단편 */}
+      {standalone.length > 0 && (
+        <div>
+          <p
+            className="px-3 mb-1.5 text-[11px] font-mono uppercase tracking-wider"
+            style={{ color: "var(--text-subtle)" }}
+          >
+            Articles
+          </p>
+          <div className="space-y-0.5">
+            {standalone.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                onClick={onClose}
+                className="block py-1.5 px-3 rounded-md text-xs leading-snug transition-colors line-clamp-2"
+                style={
+                  isCurrent(post.slug)
+                    ? {
+                        background: "var(--accent-soft)",
+                        color: "var(--accent)",
+                        fontWeight: 600,
+                      }
+                    : { color: "var(--text-muted)" }
+                }
+                title={post.title}
+              >
+                {post.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SeriesSection({
+  name,
+  posts,
+  isCurrent,
+  onClose,
+}: {
+  name: string;
+  posts: BlogMeta[];
+  isCurrent: (slug: string) => boolean;
+  onClose?: () => void;
+}) {
+  const anyCurrent = posts.some((p) => isCurrent(p.slug));
+  const [isExpanded, setIsExpanded] = useState(anyCurrent);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setIsExpanded((v) => !v)}
+        className="flex w-full items-center justify-between py-1.5 px-3 rounded-md text-[11px] font-mono uppercase tracking-wider transition-colors"
+        style={{ color: "var(--text-subtle)" }}
+      >
+        <span className="flex items-center gap-1.5">
+          {isExpanded ? (
+            <ChevronDown size={12} />
+          ) : (
+            <ChevronRight size={12} />
+          )}
+          Series · {name}
+        </span>
+        <span>{posts.length}편</span>
+      </button>
+      {isExpanded && (
+        <div className="mt-1 space-y-0.5">
+          {posts.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              onClick={onClose}
+              className="block py-1.5 px-3 pl-7 rounded-md text-xs leading-snug transition-colors line-clamp-2"
+              style={
+                isCurrent(post.slug)
+                  ? {
+                      background: "var(--accent-soft)",
+                      color: "var(--accent)",
+                      fontWeight: 600,
+                    }
+                  : { color: "var(--text-muted)" }
+              }
+              title={post.title}
+            >
+              <span
+                className="mr-2 font-mono"
+                style={{ color: "var(--text-subtle)" }}
+              >
+                {String(post.series?.order ?? 0).padStart(2, "0")}
+              </span>
+              {post.title}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Sidebar({ categories, onClose }: SidebarProps) {
   const router = useRouter();
   const isBlog = router.pathname.startsWith("/blog");
@@ -132,7 +320,6 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
           >
             dongwook.dev
           </Link>
-          {/* 모바일 닫기 버튼 */}
           <button
             onClick={onClose}
             aria-label="메뉴 닫기"
@@ -143,73 +330,31 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* 섹션 탭 */}
+        {/* 섹션 탭 — 세그먼트 컨트롤 */}
         <div
-          className="flex gap-1 p-1 rounded-lg mb-4"
-          style={{ background: "var(--bg-muted)" }}
+          className="flex p-0.5 rounded-lg mb-4"
+          style={{
+            background: "var(--bg-muted)",
+            border: "1px solid var(--border-subtle)",
+          }}
         >
-          <Link
-            href="/"
-            onClick={onClose}
-            className="flex-1 text-center py-1.5 text-sm font-medium rounded-md transition-colors"
-            style={
-              !isBlog
-                ? {
-                    background: "var(--bg-base)",
-                    color: "var(--text-strong)",
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                  }
-                : { color: "var(--text-subtle)" }
-            }
-          >
-            TIL
-          </Link>
-          <Link
+          <SectionTab href="/" active={!isBlog} onClose={onClose} label="TIL" />
+          <SectionTab
             href="/blog"
-            onClick={onClose}
-            className="flex-1 text-center py-1.5 text-sm font-medium rounded-md transition-colors"
-            style={
-              isBlog
-                ? {
-                    background: "var(--bg-base)",
-                    color: "var(--text-strong)",
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                  }
-                : { color: "var(--text-subtle)" }
-            }
-          >
-            Blog
-          </Link>
+            active={isBlog}
+            onClose={onClose}
+            label="Blog"
+          />
         </div>
 
-        {/* 검색바 (TIL 섹션에서만) */}
         {!isBlog && <SidebarSearchBar />}
       </div>
 
       {/* 콘텐츠 영역 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-1">
         {isBlog ? (
-          /* Blog 섹션 */
-          <div className="space-y-1">
-            <Link
-              href="/blog"
-              onClick={onClose}
-              className="block py-2 px-3 rounded-lg transition-colors"
-              style={
-                router.pathname === "/blog"
-                  ? {
-                      background: "var(--accent-soft)",
-                      color: "var(--accent)",
-                      fontWeight: 600,
-                    }
-                  : { color: "var(--text-muted)" }
-              }
-            >
-              전체 글 보기
-            </Link>
-          </div>
+          <BlogList onClose={onClose} />
         ) : (
-          /* TIL 섹션 */
           <>
             <Link
               href="/"
@@ -238,5 +383,43 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
         )}
       </div>
     </aside>
+  );
+}
+
+function SectionTab({
+  href,
+  active,
+  label,
+  onClose,
+}: {
+  href: string;
+  active: boolean;
+  label: string;
+  onClose?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClose}
+      className={`flex-1 text-center py-1.5 text-sm font-semibold rounded-md transition-all ${
+        active ? "" : "hover:opacity-80"
+      }`}
+      style={
+        active
+          ? {
+              background: "var(--bg-base)",
+              color: "var(--accent)",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+              border: "1px solid var(--accent-soft)",
+            }
+          : {
+              color: "var(--text-muted)",
+              background: "transparent",
+              border: "1px solid transparent",
+            }
+      }
+    >
+      {label}
+    </Link>
   );
 }
