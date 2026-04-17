@@ -1,6 +1,7 @@
 import { serialize } from "next-mdx-remote/serialize";
 import remarkGfm from "remark-gfm";
 import rehypeShiki from "@shikijs/rehype";
+import rehypeCodeChrome from "./rehype-code-chrome";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 /**
@@ -26,6 +27,7 @@ export async function serializeMdx(
             defaultColor: false,
           },
         ] as never,
+        rehypeCodeChrome as never,
       ],
       // format: "md"로 파싱해 기존 Markdown 콘텐츠의 `<`, `<=` 등 수학 기호가
       // JSX로 오인되는 것을 방지. JSX 인라인은 포기하되 cross-link/시리즈 등

@@ -34,49 +34,34 @@ export default function BlogPostPage({
   const readingMinutes = Math.max(1, Math.round(textLength / 500));
   const bodyRef = useRef<HTMLDivElement>(null);
 
-  // 렌더 후 shiki 코드 블록에 언어 라벨/복사 버튼 주입 (TIL MarkdownViewer와 동일 로직)
+  // 코드 블록은 rehypeCodeChrome이 빌드 타임에 이미 래핑해뒀다.
+  // 런타임에는 복사 버튼 클릭만 이벤트 위임으로 처리한다.
   useEffect(() => {
     const root = bodyRef.current;
     if (!root) return;
-    root.querySelectorAll("pre.shiki").forEach((pre) => {
-      if (pre.parentElement?.classList.contains("code-block")) return;
-      const lang =
-        pre.getAttribute("data-language") ??
-        pre.querySelector("code")?.className.match(/language-([\w-]+)/)?.[1] ??
-        "text";
-      const wrapper = document.createElement("div");
-      wrapper.className = "code-block";
-      const head = document.createElement("div");
-      head.className = "code-block__head";
-      const langLabel = document.createElement("span");
-      langLabel.textContent = lang;
-      head.appendChild(langLabel);
-      const copyBtn = document.createElement("button");
-      copyBtn.type = "button";
-      copyBtn.className = "code-block__copy";
-      copyBtn.setAttribute("aria-label", "코드 복사");
-      copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy</span>`;
-      copyBtn.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(pre.textContent ?? "");
-          copyBtn.classList.add("copied");
-          copyBtn.querySelector("span")!.textContent = "Copied";
-          setTimeout(() => {
-            copyBtn.classList.remove("copied");
-            copyBtn.querySelector("span")!.textContent = "Copy";
-          }, 1500);
-        } catch {}
-      });
-      head.appendChild(copyBtn);
-      pre.parentNode?.insertBefore(wrapper, pre);
-      wrapper.appendChild(head);
-      wrapper.appendChild(pre);
-    });
 
-    root.querySelectorAll("a[href^='http']").forEach((a) => {
-      a.setAttribute("target", "_blank");
-      a.setAttribute("rel", "noopener noreferrer");
-    });
+    const handleClick = async (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      const btn = target?.closest<HTMLButtonElement>(".code-block__copy");
+      if (!btn) return;
+      const pre = btn
+        .closest(".code-block")
+        ?.querySelector<HTMLElement>("pre.shiki");
+      if (!pre) return;
+      try {
+        await navigator.clipboard.writeText(pre.textContent ?? "");
+        btn.classList.add("copied");
+        const label = btn.querySelector<HTMLElement>(".code-block__copy-label");
+        if (label) label.textContent = "Copied";
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          if (label) label.textContent = "Copy";
+        }, 1500);
+      } catch {}
+    };
+
+    root.addEventListener("click", handleClick);
+    return () => root.removeEventListener("click", handleClick);
   }, [mdxSource]);
 
   return (

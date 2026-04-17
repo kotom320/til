@@ -5,6 +5,7 @@ import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeShiki from "@shikijs/rehype";
 import rehypeStringify from "rehype-stringify";
+import rehypeCodeChrome from "./rehype-code-chrome";
 
 /**
  * 마크다운 문자열을 HTML 문자열로 변환합니다.
@@ -24,6 +25,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
       themes: { light: "github-light", dark: "github-dark" },
       defaultColor: false,
     })
+    .use(rehypeCodeChrome)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown);
   return String(file);
