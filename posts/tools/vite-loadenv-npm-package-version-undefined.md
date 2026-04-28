@@ -1,5 +1,5 @@
 ---
-title: "vite loadEnv가 process.env를 머지한다 — npm_package_version이 CI에서만 undefined가 된 이유"
+title: "vite loadEnv가 process.env를 머지한다: npm_package_version이 CI에서만 undefined가 된 이유"
 date: "2026-04-27"
 tags: ["Vite", "Node.js", "CI", "TIL"]
 summary: "loadEnv 빈 prefix는 process.env까지 머지하고, npm_package_version은 패키지 매니저 경유 시에만 주입된다"
@@ -104,7 +104,7 @@ export default defineConfig(({ mode }) => {
 ## 왜 이 방법인가
 
 - **실행 방식과 무관**하게 항상 동작 (pnpm/npm/yarn/직접 바이너리 호출)
-- `package.json`을 single source of truth로 사용 — 버전이 한 곳에만 정의됨
+- `package.json`을 single source of truth로 사용 (버전이 한 곳에만 정의됨)
 - 정적 import라서 IDE/타입체커가 검증 가능
 - "패키지 매니저가 환경 변수를 주입해 줄 것"이라는 암묵적 의존이 사라짐
 
@@ -112,7 +112,7 @@ export default defineConfig(({ mode }) => {
 
 ## 정리
 
-- vite의 `loadEnv(mode, dir, '')`는 `.env*` 파일뿐 아니라 `process.env`도 합쳐서 돌려준다 — 빈 prefix는 사실상 "필터 없음"
+- vite의 `loadEnv(mode, dir, '')`는 `.env*` 파일뿐 아니라 `process.env`도 합쳐서 돌려준다. 빈 prefix는 사실상 "필터 없음"
 - `npm_package_version` 같은 npm 주입 변수는 **패키지 매니저를 경유한 실행에서만** 채워진다
 - "로컬에선 되는데 CI에선 안 되는" 증상을 만났을 때, **실행 경로 차이(패키지 매니저 경유 여부)를 1차 의심 대상**으로 삼자
 - 빌드 메타데이터(버전 등)는 `package.json`을 직접 import하는 게 실행 방식과 무관하게 가장 견고하다
