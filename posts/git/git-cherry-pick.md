@@ -94,5 +94,3 @@ git commit -m "cherry-pick multiple commits"
 * **잘라내기(cut)**: cherry-pick + 삭제 또는 `rebase --onto` 패턴으로 이동 효과 구현
 * **다중 적용**: 해시 나열이나 범위 지정으로 생산성 향상
 * 협업 브랜치에서 리베이스/force-push는 위험하니 사전 협의 필수
-
----
