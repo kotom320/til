@@ -7,161 +7,221 @@ import { PostMeta } from "@/types/category";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
 
-const POSTS_PER_PAGE = 5;
+const POSTS_PER_PAGE = 8;
 
 export default function Home() {
   const router = useRouter();
   const [posts, setPosts] = useState<PostMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeCategory, setActiveCategory] = useState("all");
 
-  // URL 쿼리에서 페이지 번호 가져오기
   useEffect(() => {
     const page = parseInt(router.query.page as string) || 1;
     setCurrentPage(page);
   }, [router.query.page]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const data = await getAllPostsClient();
-        setPosts(data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
+    getAllPostsClient()
+      .then(setPosts)
+      .finally(() => setLoading(false));
   }, []);
 
-  // 현재 페이지의 포스트들 계산
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const categories = [
+    "all",
+    ...Array.from(new Set(posts.map((p) => p.category.split("/")[0]))).sort(),
+  ];
+
+  const filtered =
+    activeCategory === "all"
+      ? posts
+      : posts.filter((p) => p.category.split("/")[0] === activeCategory);
+
+  const totalPages = Math.ceil(filtered.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const endIndex = startIndex + POSTS_PER_PAGE;
-  const currentPosts = posts.slice(startIndex, endIndex);
+  const currentPosts = filtered.slice(startIndex, startIndex + POSTS_PER_PAGE);
+
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+    setCurrentPage(1);
+  };
 
   if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1
-          className="text-3xl font-bold mb-8"
-          style={{ color: "var(--text-strong)" }}
-        >
-          전체 포스트
-        </h1>
-        <div className="space-y-6">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div
-                className="h-6 rounded mb-2"
-                style={{ background: "var(--bg-muted)" }}
-              />
-              <div
-                className="h-4 rounded w-1/3"
-                style={{ background: "var(--bg-muted)" }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-4xl mx-auto px-6 py-10">
+      {/* 히어로 */}
+      <section className="mb-12">
         <h1
-          className="text-3xl font-bold tracking-tight"
+          className="text-4xl font-bold tracking-tight mb-3"
           style={{ color: "var(--text-strong)" }}
         >
-          전체 포스트
+          dongwook.dev
         </h1>
-        <div className="text-sm" style={{ color: "var(--text-subtle)" }}>
-          총 {posts.length}개의 포스트
-        </div>
+        <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>
+          넓게 보고, 깊게 이해하고, 기록합니다.
+        </p>
+      </section>
+
+      {/* 검색 */}
+      <div className="mb-6">
+        <SearchBar className="max-w-full" />
       </div>
 
-      {/* 검색바 */}
-      <div className="mb-8">
-        <SearchBar className="max-w-2xl" />
-      </div>
-
-      {/* 포스트 목록 */}
-      <div className="grid gap-6">
-        {currentPosts.map((post) => (
-          <article
-            key={`${post.category}/${post.slug}`}
-            className="border-b pb-6"
-            style={{ borderColor: "var(--border-subtle)" }}
+      {/* 카테고리 필터 */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => handleCategoryChange(cat)}
+            className="px-3 py-1.5 rounded-full text-sm font-medium transition-all"
+            style={
+              activeCategory === cat
+                ? { background: "var(--accent)", color: "#fff" }
+                : {
+                    background: "var(--bg-muted)",
+                    color: "var(--text-muted)",
+                  }
+            }
           >
-            <Link href={`/post/${post.category}/${post.slug}`}>
-              <div className="group">
-                <h2
-                  className="text-xl font-semibold group-hover:underline transition-colors"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {post.title}
-                </h2>
-                <div
-                  className="text-sm mt-1.5"
-                  style={{ color: "var(--text-subtle)" }}
-                >
-                  <span>{post.category}</span>
-                  <span className="mx-2">·</span>
-                  <span>{post.date}</span>
-                </div>
-                {post.summary && (
-                  <p
-                    className="mt-2 line-clamp-2 leading-relaxed"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    {post.summary}
-                  </p>
-                )}
-                {post.tags &&
-                  Array.isArray(post.tags) &&
-                  post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                      {post.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 text-xs rounded"
-                          style={{
-                            background: "var(--bg-muted)",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-              </div>
-            </Link>
-          </article>
+            {cat === "all" ? "전체" : cat}
+          </button>
         ))}
       </div>
 
-      {/* 페이지네이션 */}
+      {/* 포스트 수 */}
+      <p className="text-sm mb-6" style={{ color: "var(--text-subtle)" }}>
+        {filtered.length}개의 포스트
+      </p>
+
+      {/* 카드 그리드 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+        {currentPosts.map((post) => (
+          <PostCard key={`${post.category}/${post.slug}`} post={post} />
+        ))}
+      </div>
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         baseUrl="/"
       />
+    </div>
+  );
+}
 
-      {/* 페이지 정보 */}
-      <div
-        className="text-center text-sm mt-4"
-        style={{ color: "var(--text-subtle)" }}
+function PostCard({ post }: { post: PostMeta }) {
+  const categoryLabel = post.category.split("/").pop() ?? post.category;
+  const topCategory = post.category.split("/")[0];
+
+  return (
+    <Link href={`/post/${post.category}/${post.slug}`}>
+      <article
+        className="flex flex-col p-5 rounded-xl border h-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        style={{
+          background: "var(--bg-card)",
+          borderColor: "var(--border-subtle)",
+        }}
       >
-        {posts.length > 0 && (
-          <span>
-            {startIndex + 1}-{Math.min(endIndex, posts.length)} / {posts.length}{" "}
-            포스트
-          </span>
+        {/* 카테고리 뱃지 */}
+        <span
+          className="inline-block self-start text-xs font-semibold px-2 py-0.5 rounded-md mb-3"
+          style={{
+            background: "var(--accent-soft)",
+            color: "var(--accent)",
+          }}
+        >
+          {topCategory !== categoryLabel
+            ? `${topCategory} / ${categoryLabel}`
+            : categoryLabel}
+        </span>
+
+        {/* 제목 */}
+        <h2
+          className="font-semibold leading-snug mb-2 line-clamp-2"
+          style={{ color: "var(--text-strong)" }}
+        >
+          {post.title}
+        </h2>
+
+        {/* 요약 */}
+        {post.summary && (
+          <p
+            className="text-sm leading-relaxed line-clamp-2 mb-4 flex-1"
+            style={{ color: "var(--text-muted)" }}
+          >
+            {post.summary}
+          </p>
         )}
+
+        {/* 하단: 날짜 + 대표 태그 */}
+        <div
+          className="flex items-center justify-between mt-auto pt-3 border-t"
+          style={{ borderColor: "var(--border-subtle)" }}
+        >
+          <span className="text-xs" style={{ color: "var(--text-subtle)" }}>
+            {post.date}
+          </span>
+          {post.tags && post.tags.length > 0 && (
+            <span
+              className="text-xs px-1.5 py-0.5 rounded"
+              style={{
+                background: "var(--bg-muted)",
+                color: "var(--text-subtle)",
+              }}
+            >
+              {post.tags[0]}
+            </span>
+          )}
+        </div>
+      </article>
+    </Link>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="mb-12 animate-pulse">
+        <div
+          className="h-3 w-20 rounded mb-3"
+          style={{ background: "var(--bg-muted)" }}
+        />
+        <div
+          className="h-9 w-44 rounded mb-3"
+          style={{ background: "var(--bg-muted)" }}
+        />
+        <div
+          className="h-4 w-64 rounded"
+          style={{ background: "var(--bg-muted)" }}
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="p-5 rounded-xl border animate-pulse"
+            style={{
+              borderColor: "var(--border-subtle)",
+              minHeight: 160,
+            }}
+          >
+            <div
+              className="h-4 w-16 rounded mb-3"
+              style={{ background: "var(--bg-muted)" }}
+            />
+            <div
+              className="h-5 rounded mb-2"
+              style={{ background: "var(--bg-muted)" }}
+            />
+            <div
+              className="h-4 rounded w-4/5"
+              style={{ background: "var(--bg-muted)" }}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
