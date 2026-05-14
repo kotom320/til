@@ -7,9 +7,6 @@ tags:
   - Migration
   - TIL
 summary: Firestore에서 Supabase(PostgreSQL)로 저장소를 이전하면서 달라진 설계와 코드 변경 포인트를 정리합니다.
-series:
-  name: QA 기록방 개발기
-  order: 5
 ---
 
 ## 왜 옮겼나

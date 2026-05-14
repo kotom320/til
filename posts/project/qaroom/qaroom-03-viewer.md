@@ -6,9 +6,6 @@ tags:
   - rrweb-player
   - TIL
 summary: 'rrweb-player를 React에 연동하고, 콘솔/네트워크 로그를 재생 시간에 맞게 동기화하는 방법을 정리합니다.'
-series:
-  name: QA 기록방 개발기
-  order: 3
 ---
 
 ## Viewer의 역할

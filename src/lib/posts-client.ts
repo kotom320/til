@@ -1,4 +1,4 @@
-import { PostMeta, CategoryNode, BlogMeta } from "@/types/category";
+import { PostMeta, CategoryNode } from "@/types/category";
 
 /**
  * 클라이언트 사이드에서 카테고리 트리를 가져옵니다.
@@ -48,22 +48,6 @@ export async function getPostsByCategoryClient(
     return await response.json();
   } catch (error) {
     console.error("Error fetching posts by category:", error);
-    return [];
-  }
-}
-
-/**
- * 클라이언트 사이드에서 모든 블로그 글을 가져옵니다.
- */
-export async function getAllBlogPostsClient(): Promise<BlogMeta[]> {
-  try {
-    const response = await fetch("/api/blog");
-    if (!response.ok) {
-      throw new Error("Failed to fetch blog posts");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching blog posts:", error);
     return [];
   }
 }

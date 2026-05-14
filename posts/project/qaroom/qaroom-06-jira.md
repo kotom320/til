@@ -10,9 +10,6 @@ tags:
 summary: >-
   브라우저에서 Atlassian API 호출 시 CORS에 막히는 이유와, Supabase Edge Function을 프록시로 사용해 해결한
   방법을 정리합니다.
-series:
-  name: QA 기록방 개발기
-  order: 6
 ---
 
 ## 문제: 브라우저에서 Jira API 호출이 안 된다

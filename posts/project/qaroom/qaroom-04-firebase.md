@@ -6,9 +6,6 @@ tags:
   - Firestore
   - TIL
 summary: 'Firestore로 세션 데이터를 저장하다가 1MB 문서 크기 제한에 부딪히고, 청크 분리 전략으로 해결한 과정을 정리합니다.'
-series:
-  name: QA 기록방 개발기
-  order: 4
 ---
 
 ## 처음에는 Firebase로 시작했다
