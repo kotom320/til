@@ -104,5 +104,5 @@ ssh -T git@github.com-personal
 
 ---
 
-👉 정리하면, **SSH config와 remote 설정만 잘 해두면 자동으로 계정 분리**가 된다.
+정리하면, **SSH config와 remote 설정만 잘 해두면 자동으로 계정 분리**가 된다.
 따라서 굳이 매번 계정을 바꿀 필요 없이, 프로젝트에 들어가서 그냥 `git push` 하면 끝.

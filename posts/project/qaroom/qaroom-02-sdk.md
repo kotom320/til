@@ -9,9 +9,6 @@ tags:
 summary: >-
   rrweb을 이용한 DOM 녹화, console/network 인터셉트, Shadow DOM UI 격리, lz-string 압축까지
   qaroom SDK 핵심 구현을 정리합니다.
-series:
-  name: QA 기록방 개발기
-  order: 2
 ---
 
 ## SDK가 하는 일

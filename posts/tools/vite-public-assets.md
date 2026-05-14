@@ -44,7 +44,7 @@ Vite는 `public/` 디렉토리를 다음과 같이 처리한다.
 import Logo from "/public/assets/icon.svg?react" // 오류 발생
 ```
 
-Vite 기준에서 public 파일은 “정적 URL 제공용”이며, import 대상으로 취급되지 않는다.
+Vite 기준에서 public 파일은 "정적 URL 제공용"이며, import 대상으로 취급되지 않는다.
 
 ---
 

@@ -33,22 +33,6 @@ export interface CategoryInfo {
   subcategories: CategoryInfo[];
 }
 
-export interface BlogMeta {
-  slug: string;
-  title: string;
-  date: string;
-  summary?: string;
-  description?: string;
-  tags?: string[];
-  /** 시리즈 포스트인 경우 (예: qaroom 시리즈) */
-  series?: { name: string; order: number };
-}
-
-export interface BlogPost {
-  meta: BlogMeta;
-  content: string;
-}
-
 export interface SearchResult {
   post: PostMeta;
   matchedFields: {

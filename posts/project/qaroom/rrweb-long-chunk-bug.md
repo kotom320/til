@@ -9,9 +9,6 @@ tags:
 summary: >-
   백그라운드에서 브라우저 타이머가 throttle되면 rrweb 청크 로테이션이 멈춰 수십 시간짜리 청크가 생긴다.
   visibilitychange로 해결했다.
-series:
-  name: QA 기록방 개발기
-  order: 7
 ---
 
 ## 문제 상황
