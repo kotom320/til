@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- stem -->
+  <line x1="16" y1="28" x2="16" y2="16" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+  <!-- left leaf -->
+  <path d="M16 20 C10 18 8 12 12 10 C14 9 16 11 16 14" fill="#22c55e"/>
+  <!-- right leaf -->
+  <path d="M16 17 C22 15 24 9 20 7 C18 6 16 8 16 11" fill="#16a34a"/>
+  <!-- soil -->
+  <ellipse cx="16" cy="28" rx="6" ry="2" fill="#a16207" opacity="0.5"/>
+</svg>

@@ -17,7 +17,9 @@ const themeInitScript = `
 export default function Document() {
   return (
     <Html lang="ko">
-      <Head />
+      <Head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </Head>
       <body>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Main />
