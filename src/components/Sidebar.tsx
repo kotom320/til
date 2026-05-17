@@ -24,8 +24,9 @@ function CategoryItem({
 }) {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
-  const isActive = router.asPath === node.path;
-  const isParentActive = router.asPath.startsWith(node.path + "/");
+  const currentPath = decodeURIComponent(router.asPath);
+  const isActive = currentPath === node.path;
+  const isParentActive = currentPath.startsWith(node.path + "/");
   const hasChildren = node.children && node.children.length > 0;
 
   const activeStyle = {
