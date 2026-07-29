@@ -128,8 +128,12 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
         <div className="flex items-center justify-between mb-4">
           <Link
             href="/"
-            className="text-lg font-bold transition-colors"
-            style={{ color: "var(--text-strong)" }}
+            className="text-2xl font-semibold transition-colors"
+            style={{
+              color: "var(--text-strong)",
+              fontFamily: "var(--font-display)",
+              letterSpacing: "-0.015em",
+            }}
             onClick={onClose}
           >
             dongwook.dev

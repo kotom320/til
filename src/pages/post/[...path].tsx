@@ -306,9 +306,12 @@ function PostPage({
         )}
         <div
           className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm"
-          style={{ color: "var(--text-subtle)" }}
+          style={{
+            color: "var(--text-subtle)",
+            fontFamily: "var(--font-meta)",
+          }}
         >
-          <span>{frontmatter.date}</span>
+          <span className="tabular-nums">{frontmatter.date}</span>
           <span style={{ color: "var(--border-default)" }}>·</span>
           <span>{category}</span>
           <span style={{ color: "var(--border-default)" }}>·</span>
@@ -321,10 +324,11 @@ function PostPage({
               {frontmatter.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 text-xs rounded-full"
+                  className="px-2.5 py-1 text-xs rounded-sm"
                   style={{
                     background: "var(--accent-softer)",
                     color: "var(--accent)",
+                    fontFamily: "var(--font-meta)",
                   }}
                 >
                   {tag}

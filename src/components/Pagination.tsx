@@ -53,16 +53,18 @@ export default function Pagination({
   const pageNumbers = getPageNumbers();
 
   const baseBtn =
-    "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors border";
+    "flex items-center px-3 py-2 text-sm font-medium rounded-sm transition-colors border tabular-nums";
   const inactiveStyle = {
     color: "var(--text-muted)",
     background: "var(--bg-base)",
     borderColor: "var(--border-subtle)",
+    fontFamily: "var(--font-meta)",
   } as const;
   const activeStyle = {
     color: "var(--accent-on-fill)",
     background: "var(--accent-fill)",
     borderColor: "var(--accent-fill)",
+    fontFamily: "var(--font-meta)",
   } as const;
 
   return (

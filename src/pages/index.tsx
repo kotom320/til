@@ -55,8 +55,13 @@ export default function Home() {
       {/* 히어로 */}
       <section className="mb-12">
         <h1
-          className="text-4xl font-bold tracking-tight mb-3"
-          style={{ color: "var(--text-strong)" }}
+          className="text-6xl font-semibold mb-3"
+          style={{
+            color: "var(--text-strong)",
+            fontFamily: "var(--font-display)",
+            letterSpacing: "-0.015em",
+            lineHeight: 1.12,
+          }}
         >
           dongwook.dev
         </h1>
@@ -76,16 +81,18 @@ export default function Home() {
           <button
             key={cat}
             onClick={() => handleCategoryChange(cat)}
-            className="px-3 py-1.5 rounded-full text-sm font-medium transition-all"
+            className="px-3 py-1.5 rounded-sm text-sm font-medium transition-all"
             style={
               activeCategory === cat
                 ? {
                     background: "var(--accent-fill)",
                     color: "var(--accent-on-fill)",
+                    fontFamily: "var(--font-meta)",
                   }
                 : {
                     background: "var(--bg-muted)",
                     color: "var(--text-muted)",
+                    fontFamily: "var(--font-meta)",
                   }
             }
           >
@@ -128,14 +135,8 @@ function PostCard({ post }: { post: PostMeta }) {
           borderColor: "var(--border-subtle)",
         }}
       >
-        {/* 카테고리 뱃지 */}
-        <span
-          className="inline-block self-start text-xs font-semibold px-2 py-0.5 rounded-md mb-3"
-          style={{
-            background: "var(--accent-soft)",
-            color: "var(--accent)",
-          }}
-        >
+        {/* 카테고리 키커 (Industry .card-kicker) */}
+        <span className="kicker self-start mb-3">
           {topCategory !== categoryLabel
             ? `${topCategory} / ${categoryLabel}`
             : categoryLabel}
@@ -164,15 +165,22 @@ function PostCard({ post }: { post: PostMeta }) {
           className="flex items-center justify-between mt-auto pt-3 border-t"
           style={{ borderColor: "var(--border-subtle)" }}
         >
-          <span className="text-xs" style={{ color: "var(--text-subtle)" }}>
+          <span
+            className="text-xs tabular-nums"
+            style={{
+              color: "var(--text-subtle)",
+              fontFamily: "var(--font-meta)",
+            }}
+          >
             {post.date}
           </span>
           {post.tags && post.tags.length > 0 && (
             <span
-              className="text-xs px-1.5 py-0.5 rounded"
+              className="text-xs px-1.5 py-0.5 rounded-sm"
               style={{
                 background: "var(--bg-muted)",
                 color: "var(--text-subtle)",
+                fontFamily: "var(--font-meta)",
               }}
             >
               {post.tags[0]}

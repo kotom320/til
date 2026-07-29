@@ -1,5 +1,10 @@
 @import "tailwindcss";
 @import "pretendard/dist/web/variable/pretendardvariable.css";
+@import "@fontsource/barlow-condensed/400.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/700.css";
 
 @theme {
   --font-sans:
@@ -8,48 +13,73 @@
     "Noto Sans KR", sans-serif;
   --font-mono:
     "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+
+  /* Barlow 계열에는 한글 글리프가 없다. 그래서 라틴만 나오는 면
+   * (사이트 타이틀, 날짜, 카테고리, 페이지 번호)에만 쓰고,
+   * 한글이 섞이는 제목/본문은 --font-sans 를 그대로 둔다.
+   * 혼용 제목에 condensed 를 걸면 한 줄 안에서 글자 폭이 튄다. */
+  --font-display: "Barlow Condensed", var(--font-sans);
+  --font-meta: "Barlow", var(--font-sans);
+
+  /* Industry: radius 4, 각진 모서리 */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
 }
 
 /* ---------- Design Tokens ----------
- * Anthropic/Claude 팔레트 기반. 뉴트럴은 회색이 아니라 clay 쪽으로 살짝 기운
- * 웜 그레이 램프(gray-050 #faf9f5 … gray-950 #141413)를 쓴다.
+ * Claude Design 내장 디자인 시스템 "Industry" 기반.
+ * (claude.ai/design/design-systems/industry/{theme.json,styles.css} 에서 추출)
+ *   "A blueprint wireframe: steel blue on a technical light ground,
+ *    condensed headings, square corners and registration-marked frames."
+ * ground #f2f2f3 / surface #e9e9ea / text #1d1f20 / accent #5980a6, radius 4.
  *
- * accent는 두 갈래로 나눠 둔다:
- *   --accent       텍스트로 쓰이는 clay. 본문 위 4.5:1을 넘겨야 해서 램프의 어두운 쪽.
- *   --accent-fill  면으로 깔리는 브랜드 clay(#d97757). 그 위 글자는 --accent-on-fill.
- * 하나로 합치면 링크 대비가 무너진다.
+ * 카드가 배경보다 어둡다. Industry 는 surface 를 ground 아래로 깔아
+ * 도면 위에 패널을 얹은 것처럼 보이게 한다. 이전 팔레트와 반대 방향이다.
+ *
+ * accent 는 세 갈래로 나눠 둔다:
+ *   --accent       텍스트용. 원본 #5980a6 은 ground 위 3.71:1 이라 본문 크기에
+ *                  못 쓴다. 같은 램프의 accent-700(#416180, 5.78:1)을 쓴다.
+ *   --accent-fill  글자를 얹는 면. 그 위 글자는 --accent-on-fill.
+ *   --accent-line  글자가 얹히지 않는 장식 선. 여기에 원본 스틸블루를 쓴다.
+ *
+ * 다크 모드는 Industry 에 없다(band: light). neutral/accent 램프에서 파생한
+ * 확장이므로, 다크가 어색하면 프리셋이 아니라 이 파생이 원인이다.
  */
 :root {
-  --bg-base: #faf9f5;
-  --bg-subtle: #f5f4ed;
-  --bg-muted: #f0eee6;
-  --bg-inline-code: #efeae0;
-  --bg-code-block: #ffffff;
-  --bg-card: #ffffff;
+  --bg-base: #f2f2f3;
+  --bg-subtle: #e9e9ea;
+  --bg-muted: #d9d9dd;
+  --bg-inline-code: #e7e7ea;
+  --bg-code-block: #f5f5f8;
+  --bg-card: #e9e9ea;
 
-  --text-strong: #141413;
-  --text-body: #262624;
-  --text-muted: #5e5d59;
-  /* gray-550(#73726c)은 레일(--bg-subtle)·칩(--bg-muted) 위에서 AA에 못 미친다. */
-  --text-subtle: #6b6a64;
-  --text-inline-code: #3d3d3a;
+  --text-strong: #1d1f20;
+  --text-body: #2b2b2d;
+  --text-muted: #424244;
+  --text-subtle: #5d5d60;
+  --text-inline-code: #2c455d;
 
-  --border-subtle: #e8e6dc;
-  --border-default: #d1cfc5;
-  --border-code: #e8e6dc;
+  --border-subtle: #d0d0d1;
+  --border-default: #b7b7ba;
+  --border-code: #d0d0d1;
 
-  --accent: #9c4326;
-  --accent-hover: #7f3620;
-  --accent-soft: #f3dfd4;
-  --accent-softer: #fbf1eb;
-  --accent-fill: #d97757;
-  --accent-on-fill: #1f1e1d;
+  --accent: #416180;
+  --accent-hover: #2c455d;
+  --accent-soft: #d6ebff;
+  --accent-softer: #eef6ff;
+  --accent-fill: #416180;
+  --accent-on-fill: #f2f2f3;
+  --accent-line: #5980a6;
 
-  --tone-info: #3f6b96;
-  --tone-info-bg: rgba(106, 155, 204, 0.1);
-  --tone-success: #3f6e5f;
+  /* 카드가 흰색에서 surface(#e9e9ea)로 내려앉아 톤 색을 한 단계씩 더 어둡게
+   * 잡아야 카드 위에서 4.5:1이 나온다. info 는 시스템 accent 와 같은 값. */
+  --tone-info: #416180;
+  --tone-info-bg: rgba(89, 128, 166, 0.12);
+  --tone-success: #35604f;
   --tone-success-bg: rgba(98, 153, 135, 0.12);
-  --tone-warning: #8a6218;
+  --tone-warning: #6f4e13;
   --tone-warning-bg: rgba(138, 98, 24, 0.09);
   --tone-tip: #57529a;
   --tone-tip-bg: rgba(130, 125, 189, 0.1);
@@ -58,35 +88,36 @@
 }
 
 html[data-theme="dark"] {
-  --bg-base: #262624;
-  --bg-subtle: #1a1918;
-  --bg-muted: #30302e;
-  --bg-inline-code: #30302e;
-  --bg-code-block: #1a1918;
-  --bg-card: #30302e;
+  --bg-base: #2b2b2d;
+  --bg-subtle: #1d1f20;
+  --bg-muted: #444446;
+  --bg-inline-code: #383839;
+  --bg-code-block: #1d1f20;
+  --bg-card: #383839;
 
-  --text-strong: #faf9f5;
-  --text-body: #e8e6dc;
-  --text-muted: #b0aea5;
-  --text-subtle: #9c9a92;
-  --text-inline-code: #e3dacc;
+  --text-strong: #f5f5f8;
+  --text-body: #e7e7ea;
+  --text-muted: #d4d4d7;
+  --text-subtle: #b7b7ba;
+  --text-inline-code: #b5d9fd;
 
-  --border-subtle: #3d3d3a;
-  --border-default: #4d4c48;
-  --border-code: #3d3d3a;
+  --border-subtle: #444446;
+  --border-default: #5d5d60;
+  --border-code: #444446;
 
-  --accent: #e89478;
-  --accent-hover: #f0a489;
-  --accent-soft: #3e2b23;
-  --accent-softer: #2e2320;
-  --accent-fill: #d97757;
-  --accent-on-fill: #1f1e1d;
+  --accent: #b5d9fd;
+  --accent-hover: #d6ebff;
+  --accent-soft: #2c455d;
+  --accent-softer: #1d2d3d;
+  --accent-fill: #749dc4;
+  --accent-on-fill: #1d1f20;
+  --accent-line: #749dc4;
 
-  --tone-info: #8fb6dc;
-  --tone-info-bg: rgba(106, 155, 204, 0.14);
-  --tone-success: #7fb8a3;
+  --tone-info: #b5d9fd;
+  --tone-info-bg: rgba(148, 188, 227, 0.14);
+  --tone-success: #9ccfba;
   --tone-success-bg: rgba(98, 153, 135, 0.16);
-  --tone-warning: #d2a857;
+  --tone-warning: #e2bd76;
   --tone-warning-bg: rgba(210, 168, 87, 0.14);
   --tone-tip: #b0abe2;
   --tone-tip-bg: rgba(130, 125, 189, 0.16);
@@ -124,7 +155,10 @@ body {
 .prose-kr h3,
 .prose-kr h4 {
   color: var(--text-strong);
-  letter-spacing: -0.02em;
+  /* Industry 헤딩 메트릭. 폭은 한글 때문에 condensed 로 못 바꾸므로
+   * 자간/행간으로만 조인다. 본문 행간(1.85)은 한글 가독성 때문에 유지. */
+  letter-spacing: -0.015em;
+  line-height: 1.18;
   scroll-margin-top: 5rem;
 }
 .prose-kr h1 {
@@ -199,11 +233,11 @@ body {
 .prose-kr blockquote {
   margin: 1.5rem 0;
   padding: 0.5rem 0 0.5rem 1.25rem;
-  border-left: 3px solid var(--accent-fill);
+  border-left: 3px solid var(--accent-line);
   background: var(--accent-softer);
   color: var(--text-muted);
   font-style: italic;
-  border-radius: 0 0.375rem 0.375rem 0;
+  border-radius: 0;
 }
 .prose-kr blockquote > p {
   margin: 0.25rem 0;
@@ -224,7 +258,7 @@ body {
   display: table;
   table-layout: auto;
   border: 1px solid var(--border-subtle);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
 }
 .prose-kr thead {
   background: var(--bg-muted);
@@ -245,7 +279,7 @@ body {
 }
 
 .prose-kr img {
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   max-width: 100%;
   margin: 1.5rem 0;
   border: 1px solid var(--border-subtle);
@@ -256,7 +290,7 @@ body {
   background: var(--bg-inline-code);
   color: var(--text-inline-code);
   padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   font-size: 0.9em;
   font-family: var(--font-mono);
 }
@@ -295,7 +329,7 @@ html[data-theme="dark"] .prose-kr pre.shiki span {
   position: relative;
   margin: 1.5rem 0;
   border: 1px solid var(--border-code);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--bg-code-block);
 }
@@ -315,7 +349,7 @@ html[data-theme="dark"] .prose-kr pre.shiki span {
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   color: var(--text-subtle);
   cursor: pointer;
   background: transparent;
@@ -347,14 +381,26 @@ html[data-theme="dark"] .prose-kr pre.shiki span {
 }
 *::-webkit-scrollbar-thumb {
   background: var(--border-default);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   border: 2px solid var(--bg-base);
 }
 *::-webkit-scrollbar-thumb:hover {
   background: var(--text-subtle);
 }
 
+/* Industry: ::selection { accent 30% } */
 ::selection {
-  background: var(--accent-soft);
+  background: color-mix(in srgb, var(--accent-line) 30%, transparent);
   color: var(--text-strong);
+}
+
+/* Industry 의 .card-kicker — 카테고리 뱃지를 면이 아니라
+ * 작은 대문자 + 넓은 자간의 라벨로 처리한다. */
+.kicker {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
