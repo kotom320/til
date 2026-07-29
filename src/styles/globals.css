@@ -29,98 +29,99 @@
 }
 
 /* ---------- Design Tokens ----------
- * Claude Design 내장 디자인 시스템 "Industry" 기반.
- * (claude.ai/design/design-systems/industry/{theme.json,styles.css} 에서 추출)
- *   "A blueprint wireframe: steel blue on a technical light ground,
- *    condensed headings, square corners and registration-marked frames."
- * ground #f2f2f3 / surface #e9e9ea / text #1d1f20 / accent #5980a6, radius 4.
+ * Claude Design "Industry" 의 구조(각진 모서리, condensed 라틴 디스플레이,
+ * kicker 라벨, 그리드)는 그대로 두고 팔레트만 밝고 푸른 쪽으로 다시 잡았다.
  *
- * 카드가 배경보다 어둡다. Industry 는 surface 를 ground 아래로 깔아
- * 도면 위에 패널을 얹은 것처럼 보이게 한다. 이전 팔레트와 반대 방향이다.
+ * 프리셋 원본을 그대로 쓰면 침침하다. 이유가 셋이고 셋 다 뒤집었다:
+ *   1. Industry 는 scheme "mono" / sat 0.3 이라 뉴트럴(#f2f2f3, #e9e9ea)이
+ *      사실상 순수 회색이다. 파랑이 링크와 키커에만 조금 나온다.
+ *      → 뉴트럴 전체에 파란 기를 넣었다.
+ *   2. 프리셋은 surface 를 ground 아래로 깔아 카드가 배경보다 어둡다.
+ *      → 카드를 흰색으로 올려 배경 위로 뜨게 했다.
+ *   3. 원본 accent #5980a6 이 대비에 걸려 accent-700(#416180) 네이비까지
+ *      내려갔었다. → 채도를 올린 #1a68b0 으로 바꿨다. 더 파랗고 더 밝은데
+ *      대비는 오히려 높다 (ground 위 5.40:1).
  *
- * accent 는 세 갈래로 나눠 둔다:
- *   --accent       텍스트용. 원본 #5980a6 은 ground 위 3.71:1 이라 본문 크기에
- *                  못 쓴다. 같은 램프의 accent-700(#416180, 5.78:1)을 쓴다.
+ * accent 는 계속 세 갈래다:
+ *   --accent       본문 크기 텍스트가 얹히는 값. 4.5:1 을 넘겨야 한다.
  *   --accent-fill  글자를 얹는 면. 그 위 글자는 --accent-on-fill.
- *   --accent-line  글자가 얹히지 않는 장식 선. 여기에 원본 스틸블루를 쓴다.
- *
- * 다크 모드는 Industry 에 없다(band: light). neutral/accent 램프에서 파생한
- * 확장이므로, 다크가 어색하면 프리셋이 아니라 이 파생이 원인이다.
+ *   --accent-line  글자가 얹히지 않는 장식 선. 가장 밝은 파랑을 쓴다.
  */
 :root {
-  --bg-base: #f2f2f3;
-  --bg-subtle: #e9e9ea;
-  --bg-muted: #d9d9dd;
-  --bg-inline-code: #e7e7ea;
-  --bg-code-block: #f5f5f8;
-  --bg-card: #e9e9ea;
+  --bg-base: #f5f8fc;
+  --bg-subtle: #eaf1f9;
+  --bg-muted: #e0eaf6;
+  --bg-inline-code: #e6eef8;
+  --bg-code-block: #ffffff;
+  --bg-card: #ffffff;
 
-  --text-strong: #1d1f20;
-  --text-body: #2b2b2d;
-  --text-muted: #424244;
-  --text-subtle: #5d5d60;
-  --text-inline-code: #2c455d;
+  --text-strong: #14202e;
+  --text-body: #1f2c3c;
+  --text-muted: #435568;
+  --text-subtle: #566a80;
+  --text-inline-code: #10537f;
 
-  --border-subtle: #d0d0d1;
-  --border-default: #b7b7ba;
-  --border-code: #d0d0d1;
+  --border-subtle: #d7e3f0;
+  --border-default: #b6cbe1;
+  --border-code: #d7e3f0;
 
-  --accent: #416180;
-  --accent-hover: #2c455d;
-  --accent-soft: #d6ebff;
-  --accent-softer: #eef6ff;
-  --accent-fill: #416180;
-  --accent-on-fill: #f2f2f3;
-  --accent-line: #5980a6;
+  --accent: #1a68b0;
+  --accent-hover: #12508a;
+  --accent-soft: #d5e7f9;
+  --accent-softer: #eaf3fd;
+  --accent-fill: #1a68b0;
+  --accent-on-fill: #ffffff;
+  --accent-line: #3d92d9;
 
-  /* 카드가 흰색에서 surface(#e9e9ea)로 내려앉아 톤 색을 한 단계씩 더 어둡게
-   * 잡아야 카드 위에서 4.5:1이 나온다. info 는 시스템 accent 와 같은 값. */
-  --tone-info: #416180;
-  --tone-info-bg: rgba(89, 128, 166, 0.12);
-  --tone-success: #35604f;
-  --tone-success-bg: rgba(98, 153, 135, 0.12);
-  --tone-warning: #6f4e13;
-  --tone-warning-bg: rgba(138, 98, 24, 0.09);
-  --tone-tip: #57529a;
-  --tone-tip-bg: rgba(130, 125, 189, 0.1);
+  --tone-info: #1a68b0;
+  --tone-info-bg: rgba(26, 104, 176, 0.09);
+  --tone-success: #1c6b52;
+  --tone-success-bg: rgba(28, 107, 82, 0.09);
+  --tone-warning: #8a5a10;
+  --tone-warning-bg: rgba(138, 90, 16, 0.09);
+  --tone-tip: #5b4bb8;
+  --tone-tip-bg: rgba(91, 75, 184, 0.09);
 
   color-scheme: light;
 }
 
+/* 다크는 Industry 에 없다(band: light). 회색 차콜 대신 청사진 네이비로
+ * 파생해서 라이트와 같은 계열로 맞췄다. 다크가 어색하면 프리셋이 아니라
+ * 이 파생이 원인이다. */
 html[data-theme="dark"] {
-  --bg-base: #2b2b2d;
-  --bg-subtle: #1d1f20;
-  --bg-muted: #444446;
-  --bg-inline-code: #383839;
-  --bg-code-block: #1d1f20;
-  --bg-card: #383839;
+  --bg-base: #131f2d;
+  --bg-subtle: #0d1723;
+  --bg-muted: #26374b;
+  --bg-inline-code: #1c2b3c;
+  --bg-code-block: #0d1723;
+  --bg-card: #1c2b3c;
 
-  --text-strong: #f5f5f8;
-  --text-body: #e7e7ea;
-  --text-muted: #d4d4d7;
-  --text-subtle: #b7b7ba;
-  --text-inline-code: #b5d9fd;
+  --text-strong: #eef5fd;
+  --text-body: #dbe6f3;
+  --text-muted: #b4c6da;
+  --text-subtle: #93a9c1;
+  --text-inline-code: #8fc7f5;
 
-  --border-subtle: #444446;
-  --border-default: #5d5d60;
-  --border-code: #444446;
+  --border-subtle: #2b3d52;
+  --border-default: #3d5470;
+  --border-code: #2b3d52;
 
-  --accent: #b5d9fd;
-  --accent-hover: #d6ebff;
-  --accent-soft: #2c455d;
-  --accent-softer: #1d2d3d;
-  --accent-fill: #749dc4;
-  --accent-on-fill: #1d1f20;
-  --accent-line: #749dc4;
+  --accent: #74b8f0;
+  --accent-hover: #9bcef7;
+  --accent-soft: #1e3a54;
+  --accent-softer: #16283a;
+  --accent-fill: #74b8f0;
+  --accent-on-fill: #0d1723;
+  --accent-line: #4a9ee0;
 
-  --tone-info: #b5d9fd;
-  --tone-info-bg: rgba(148, 188, 227, 0.14);
-  --tone-success: #9ccfba;
-  --tone-success-bg: rgba(98, 153, 135, 0.16);
-  --tone-warning: #e2bd76;
-  --tone-warning-bg: rgba(210, 168, 87, 0.14);
-  --tone-tip: #b0abe2;
-  --tone-tip-bg: rgba(130, 125, 189, 0.16);
+  --tone-info: #74b8f0;
+  --tone-info-bg: rgba(116, 184, 240, 0.13);
+  --tone-success: #6fc7a4;
+  --tone-success-bg: rgba(111, 199, 164, 0.13);
+  --tone-warning: #e0b263;
+  --tone-warning-bg: rgba(224, 178, 99, 0.13);
+  --tone-tip: #a99cf0;
+  --tone-tip-bg: rgba(169, 156, 240, 0.13);
 
   color-scheme: dark;
 }
