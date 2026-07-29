@@ -52,23 +52,9 @@ export default function Home() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      {/* 히어로 */}
-      <section className="mb-12">
-        <h1
-          className="text-5xl font-extrabold mb-3"
-          style={{
-            color: "var(--text-strong)",
-            fontFamily: "var(--font-display)",
-            letterSpacing: "-0.01em",
-            lineHeight: 1.2,
-          }}
-        >
-          dongwook.dev
-        </h1>
-        <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>
-          넓게 보고, 깊게 이해하고, 기록합니다.
-        </p>
-      </section>
+      {/* 워드마크는 사이드바에만 둔다. 화면에 h1을 안 띄우더라도 문서에는
+          제목이 있어야 해서 스크린리더용으로만 남긴다. */}
+      <h1 className="sr-only">dongwook.dev</h1>
 
       {/* 검색 */}
       <div className="mb-6">
@@ -195,20 +181,6 @@ function PostCard({ post }: { post: PostMeta }) {
 function LoadingSkeleton() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      <div className="mb-12 animate-pulse">
-        <div
-          className="h-3 w-20 rounded mb-3"
-          style={{ background: "var(--bg-muted)" }}
-        />
-        <div
-          className="h-9 w-44 rounded mb-3"
-          style={{ background: "var(--bg-muted)" }}
-        />
-        <div
-          className="h-4 w-64 rounded"
-          style={{ background: "var(--bg-muted)" }}
-        />
-      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[...Array(6)].map((_, i) => (
           <div
