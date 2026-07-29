@@ -132,7 +132,7 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
             style={{
               color: "var(--text-strong)",
               fontFamily: "var(--font-display)",
-              letterSpacing: "-0.015em",
+              letterSpacing: "-0.01em",
             }}
             onClick={onClose}
           >

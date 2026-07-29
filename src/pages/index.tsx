@@ -55,12 +55,12 @@ export default function Home() {
       {/* 히어로 */}
       <section className="mb-12">
         <h1
-          className="text-6xl font-semibold mb-3"
+          className="text-5xl font-extrabold mb-3"
           style={{
             color: "var(--text-strong)",
             fontFamily: "var(--font-display)",
-            letterSpacing: "-0.015em",
-            lineHeight: 1.12,
+            letterSpacing: "-0.01em",
+            lineHeight: 1.2,
           }}
         >
           dongwook.dev

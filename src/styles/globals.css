@@ -1,10 +1,6 @@
 @import "tailwindcss";
 @import "pretendard/dist/web/variable/pretendardvariable.css";
-@import "@fontsource/barlow-condensed/400.css";
-@import "@fontsource/barlow-condensed/600.css";
-@import "@fontsource/barlow/400.css";
-@import "@fontsource/barlow/500.css";
-@import "@fontsource/barlow/700.css";
+@import "@fontsource-variable/manrope";
 
 @theme {
   --font-sans:
@@ -14,12 +10,12 @@
   --font-mono:
     "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
 
-  /* Barlow 계열에는 한글 글리프가 없다. 그래서 라틴만 나오는 면
+  /* Manrope 에는 한글 글리프가 없다. 그래서 라틴만 나오는 면
    * (사이트 타이틀, 날짜, 카테고리, 페이지 번호)에만 쓰고,
    * 한글이 섞이는 제목/본문은 --font-sans 를 그대로 둔다.
-   * 혼용 제목에 condensed 를 걸면 한 줄 안에서 글자 폭이 튄다. */
-  --font-display: "Barlow Condensed", var(--font-sans);
-  --font-meta: "Barlow", var(--font-sans);
+   * 세미 지오메트릭이라 Pretendard 와 결이 비슷해 혼용 줄에서 덜 튄다. */
+  --font-display: "Manrope Variable", var(--font-sans);
+  --font-meta: "Manrope Variable", var(--font-sans);
 
   /* Industry: radius 4, 각진 모서리 */
   --radius-sm: 2px;
@@ -139,7 +135,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg-base);
   color: var(--text-body);
-  letter-spacing: -0.003em;
 }
 
 /* ---------- Markdown Typography (.prose-kr) ---------- */
@@ -156,10 +151,10 @@ body {
 .prose-kr h3,
 .prose-kr h4 {
   color: var(--text-strong);
-  /* Industry 헤딩 메트릭. 폭은 한글 때문에 condensed 로 못 바꾸므로
-   * 자간/행간으로만 조인다. 본문 행간(1.85)은 한글 가독성 때문에 유지. */
-  letter-spacing: -0.015em;
-  line-height: 1.18;
+  /* 조였던 걸 다시 푼다. 한글 제목은 자간을 음수로 당기면 받침이 붙어
+   * 금방 답답해진다. 행간도 1.18 은 두 줄 제목에서 숨이 막힌다. */
+  letter-spacing: -0.005em;
+  line-height: 1.35;
   scroll-margin-top: 5rem;
 }
 .prose-kr h1 {
