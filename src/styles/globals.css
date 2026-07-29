@@ -30,7 +30,8 @@
   --text-strong: #141413;
   --text-body: #262624;
   --text-muted: #5e5d59;
-  --text-subtle: #73726c;
+  /* gray-550(#73726c)은 레일(--bg-subtle)·칩(--bg-muted) 위에서 AA에 못 미친다. */
+  --text-subtle: #6b6a64;
   --text-inline-code: #3d3d3a;
 
   --border-subtle: #e8e6dc;
@@ -42,7 +43,6 @@
   --accent-soft: #f3dfd4;
   --accent-softer: #fbf1eb;
   --accent-fill: #d97757;
-  --accent-fill-hover: #c96442;
   --accent-on-fill: #1f1e1d;
 
   --tone-info: #3f6b96;
@@ -50,7 +50,7 @@
   --tone-success: #3f6e5f;
   --tone-success-bg: rgba(98, 153, 135, 0.12);
   --tone-warning: #8a6218;
-  --tone-warning-bg: rgba(227, 218, 204, 0.55);
+  --tone-warning-bg: rgba(138, 98, 24, 0.09);
   --tone-tip: #57529a;
   --tone-tip-bg: rgba(130, 125, 189, 0.1);
 
@@ -80,7 +80,6 @@ html[data-theme="dark"] {
   --accent-soft: #3e2b23;
   --accent-softer: #2e2320;
   --accent-fill: #d97757;
-  --accent-fill-hover: #e08a6b;
   --accent-on-fill: #1f1e1d;
 
   --tone-info: #8fb6dc;
@@ -88,8 +87,8 @@ html[data-theme="dark"] {
   --tone-success: #7fb8a3;
   --tone-success-bg: rgba(98, 153, 135, 0.16);
   --tone-warning: #d2a857;
-  --tone-warning-bg: rgba(227, 218, 204, 0.1);
-  --tone-tip: #a49fda;
+  --tone-warning-bg: rgba(210, 168, 87, 0.14);
+  --tone-tip: #b0abe2;
   --tone-tip-bg: rgba(130, 125, 189, 0.16);
 
   color-scheme: dark;
@@ -331,6 +330,11 @@ html[data-theme="dark"] .prose-kr pre.shiki span {
 }
 .code-block__copy.copied {
   color: var(--tone-success);
+}
+
+/* 검색 결과 hover — 인라인 style로는 :hover를 표현할 수 없어 클래스로 뺀다. */
+.search-result:hover {
+  background: var(--bg-muted);
 }
 
 /* ---------- Scrollbar ---------- */

@@ -109,21 +109,29 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
       <form onSubmit={handleSearch} className="relative">
         <div className="relative">
           <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2"
             size={20}
+            style={{ color: "var(--text-subtle)" }}
           />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="포스트 검색..."
-            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="w-full pl-10 pr-10 py-2 rounded-lg outline-none transition-colors"
+            style={{
+              background: "var(--bg-card)",
+              color: "var(--text-body)",
+              border: "1px solid var(--border-default)",
+            }}
           />
           {query && (
             <button
               type="button"
               onClick={clearSearch}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              aria-label="검색어 지우기"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              style={{ color: "var(--text-subtle)" }}
             >
               <X size={20} />
             </button>
@@ -133,11 +141,25 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
 
       {/* 검색 결과 */}
       {showResults && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
+        <div
+          className="absolute top-full left-0 right-0 mt-2 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50"
+          style={{
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-subtle)",
+          }}
+        >
           {isSearching ? (
-            <div className="p-4 text-center text-gray-500">검색 중...</div>
+            <div
+              className="p-4 text-center"
+              style={{ color: "var(--text-subtle)" }}
+            >
+              검색 중...
+            </div>
           ) : hasSearched && results.length === 0 ? (
-            <div className="p-4 text-center text-gray-500">
+            <div
+              className="p-4 text-center"
+              style={{ color: "var(--text-subtle)" }}
+            >
               검색 결과가 없습니다.
             </div>
           ) : (
@@ -150,53 +172,79 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
                       ? `/post/${result.post.category}/${result.post.slug}`
                       : `/post/${result.post.slug}`
                   }
-                  className="block p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                  className="search-result block p-3 rounded-lg transition-colors"
                   onClick={() => setShowResults(false)}
                 >
                   <div className="flex items-start space-x-3">
                     <FileText
-                      className="flex-shrink-0 text-gray-400 mt-1"
+                      className="flex-shrink-0 mt-1"
                       size={16}
+                      style={{ color: "var(--text-subtle)" }}
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 truncate">
+                      <h4
+                        className="text-sm font-medium truncate"
+                        style={{ color: "var(--text-strong)" }}
+                      >
                         {result.post.title}
                       </h4>
-                      <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">
+                      <div
+                        className="mt-1 flex items-center space-x-2 text-xs"
+                        style={{ color: "var(--text-subtle)" }}
+                      >
                         <span className="flex items-center">
                           <Calendar size={12} className="mr-1" />
                           {result.post.date}
                         </span>
                         {result.post.category && (
-                          <span className="text-blue-600">
+                          <span style={{ color: "var(--accent)" }}>
                             {result.post.category}
                           </span>
                         )}
                       </div>
                       {result.post.summary && (
-                        <p className="mt-1 text-xs text-gray-600 line-clamp-2">
+                        <p
+                          className="mt-1 text-xs line-clamp-2"
+                          style={{ color: "var(--text-muted)" }}
+                        >
                           {result.post.summary}
                         </p>
                       )}
                       <div className="mt-2 flex items-center space-x-2">
-                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                        <span
+                          className="text-xs px-2 py-1 rounded"
+                          style={{
+                            color: "var(--tone-success)",
+                            background: "var(--tone-success-bg)",
+                          }}
+                        >
                           {getMatchedFieldText(result.matchedFields)}
                         </span>
                         {result.post.tags && result.post.tags.length > 0 && (
                           <div className="flex items-center space-x-1">
-                            <Tag size={12} className="text-gray-400" />
+                            <Tag
+                              size={12}
+                              style={{ color: "var(--text-subtle)" }}
+                            />
                             {result.post.tags
                               .slice(0, 3)
                               .map((tag, tagIndex) => (
                                 <span
                                   key={tagIndex}
-                                  className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
+                                  className="text-xs px-2 py-1 rounded"
+                                  style={{
+                                    background: "var(--bg-muted)",
+                                    color: "var(--text-muted)",
+                                  }}
                                 >
                                   {tag}
                                 </span>
                               ))}
                             {result.post.tags.length > 3 && (
-                              <span className="text-xs text-gray-400">
+                              <span
+                                className="text-xs"
+                                style={{ color: "var(--text-subtle)" }}
+                              >
                                 +{result.post.tags.length - 3}
                               </span>
                             )}
