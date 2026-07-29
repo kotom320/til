@@ -79,7 +79,10 @@ export default function Home() {
             className="px-3 py-1.5 rounded-full text-sm font-medium transition-all"
             style={
               activeCategory === cat
-                ? { background: "var(--accent)", color: "#fff" }
+                ? {
+                    background: "var(--accent-fill)",
+                    color: "var(--accent-on-fill)",
+                  }
                 : {
                     background: "var(--bg-muted)",
                     color: "var(--text-muted)",

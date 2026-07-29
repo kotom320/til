@@ -60,9 +60,9 @@ export default function Pagination({
     borderColor: "var(--border-subtle)",
   } as const;
   const activeStyle = {
-    color: "#ffffff",
-    background: "var(--accent)",
-    borderColor: "var(--accent)",
+    color: "var(--accent-on-fill)",
+    background: "var(--accent-fill)",
+    borderColor: "var(--accent-fill)",
   } as const;
 
   return (

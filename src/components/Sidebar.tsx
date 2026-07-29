@@ -116,7 +116,7 @@ export default function Sidebar({ categories, onClose }: SidebarProps) {
     <aside
       className="w-64 flex flex-col h-screen"
       style={{
-        background: "var(--bg-base)",
+        background: "var(--bg-subtle)",
         borderRight: "1px solid var(--border-subtle)",
       }}
     >

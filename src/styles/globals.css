@@ -10,55 +10,87 @@
     "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
 }
 
-/* ---------- Design Tokens ---------- */
+/* ---------- Design Tokens ----------
+ * Anthropic/Claude 팔레트 기반. 뉴트럴은 회색이 아니라 clay 쪽으로 살짝 기운
+ * 웜 그레이 램프(gray-050 #faf9f5 … gray-950 #141413)를 쓴다.
+ *
+ * accent는 두 갈래로 나눠 둔다:
+ *   --accent       텍스트로 쓰이는 clay. 본문 위 4.5:1을 넘겨야 해서 램프의 어두운 쪽.
+ *   --accent-fill  면으로 깔리는 브랜드 clay(#d97757). 그 위 글자는 --accent-on-fill.
+ * 하나로 합치면 링크 대비가 무너진다.
+ */
 :root {
-  --bg-base: #ffffff;
-  --bg-subtle: #fafafa;
-  --bg-muted: #f4f4f5;
-  --bg-inline-code: #f1f5f9;
-  --bg-code-block: #f8fafc;
+  --bg-base: #faf9f5;
+  --bg-subtle: #f5f4ed;
+  --bg-muted: #f0eee6;
+  --bg-inline-code: #efeae0;
+  --bg-code-block: #ffffff;
   --bg-card: #ffffff;
 
-  --text-strong: #0f172a;
-  --text-body: #1f2937;
-  --text-muted: #525b6b;
-  --text-subtle: #6b7280;
-  --text-inline-code: #be185d;
+  --text-strong: #141413;
+  --text-body: #262624;
+  --text-muted: #5e5d59;
+  --text-subtle: #73726c;
+  --text-inline-code: #3d3d3a;
 
-  --border-subtle: #e5e7eb;
-  --border-default: #d1d5db;
-  --border-code: #e2e8f0;
+  --border-subtle: #e8e6dc;
+  --border-default: #d1cfc5;
+  --border-code: #e8e6dc;
 
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-soft: #dbeafe;
-  --accent-softer: #eff6ff;
+  --accent: #9c4326;
+  --accent-hover: #7f3620;
+  --accent-soft: #f3dfd4;
+  --accent-softer: #fbf1eb;
+  --accent-fill: #d97757;
+  --accent-fill-hover: #c96442;
+  --accent-on-fill: #1f1e1d;
+
+  --tone-info: #3f6b96;
+  --tone-info-bg: rgba(106, 155, 204, 0.1);
+  --tone-success: #3f6e5f;
+  --tone-success-bg: rgba(98, 153, 135, 0.12);
+  --tone-warning: #8a6218;
+  --tone-warning-bg: rgba(227, 218, 204, 0.55);
+  --tone-tip: #57529a;
+  --tone-tip-bg: rgba(130, 125, 189, 0.1);
 
   color-scheme: light;
 }
 
 html[data-theme="dark"] {
-  --bg-base: #0b0d12;
-  --bg-subtle: #111319;
-  --bg-muted: #1a1d25;
-  --bg-inline-code: #1e2330;
-  --bg-code-block: #0f1117;
-  --bg-card: #111319;
+  --bg-base: #262624;
+  --bg-subtle: #1a1918;
+  --bg-muted: #30302e;
+  --bg-inline-code: #30302e;
+  --bg-code-block: #1a1918;
+  --bg-card: #30302e;
 
-  --text-strong: #f4f4f5;
-  --text-body: #d4d4d8;
-  --text-muted: #a1a1aa;
-  --text-subtle: #71717a;
-  --text-inline-code: #f472b6;
+  --text-strong: #faf9f5;
+  --text-body: #e8e6dc;
+  --text-muted: #b0aea5;
+  --text-subtle: #9c9a92;
+  --text-inline-code: #e3dacc;
 
-  --border-subtle: #262a33;
-  --border-default: #323742;
-  --border-code: #1f2330;
+  --border-subtle: #3d3d3a;
+  --border-default: #4d4c48;
+  --border-code: #3d3d3a;
 
-  --accent: #60a5fa;
-  --accent-hover: #93c5fd;
-  --accent-soft: #1e3a8a33;
-  --accent-softer: #1e3a8a1a;
+  --accent: #e89478;
+  --accent-hover: #f0a489;
+  --accent-soft: #3e2b23;
+  --accent-softer: #2e2320;
+  --accent-fill: #d97757;
+  --accent-fill-hover: #e08a6b;
+  --accent-on-fill: #1f1e1d;
+
+  --tone-info: #8fb6dc;
+  --tone-info-bg: rgba(106, 155, 204, 0.14);
+  --tone-success: #7fb8a3;
+  --tone-success-bg: rgba(98, 153, 135, 0.16);
+  --tone-warning: #d2a857;
+  --tone-warning-bg: rgba(227, 218, 204, 0.1);
+  --tone-tip: #a49fda;
+  --tone-tip-bg: rgba(130, 125, 189, 0.16);
 
   color-scheme: dark;
 }
@@ -168,7 +200,7 @@ body {
 .prose-kr blockquote {
   margin: 1.5rem 0;
   padding: 0.5rem 0 0.5rem 1.25rem;
-  border-left: 3px solid var(--accent);
+  border-left: 3px solid var(--accent-fill);
   background: var(--accent-softer);
   color: var(--text-muted);
   font-style: italic;
@@ -298,7 +330,7 @@ html[data-theme="dark"] .prose-kr pre.shiki span {
   background: var(--bg-base);
 }
 .code-block__copy.copied {
-  color: #16a34a;
+  color: var(--tone-success);
 }
 
 /* ---------- Scrollbar ---------- */

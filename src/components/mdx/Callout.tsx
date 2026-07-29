@@ -9,27 +9,27 @@ const toneStyles: Record<
 > = {
   info: {
     icon: <Info size={18} />,
-    color: "#2563eb",
-    bg: "var(--accent-softer)",
-    border: "var(--accent)",
+    color: "var(--tone-info)",
+    bg: "var(--tone-info-bg)",
+    border: "var(--tone-info)",
   },
   success: {
     icon: <CheckCircle2 size={18} />,
-    color: "#16a34a",
-    bg: "rgba(34,197,94,0.08)",
-    border: "#16a34a",
+    color: "var(--tone-success)",
+    bg: "var(--tone-success-bg)",
+    border: "var(--tone-success)",
   },
   warning: {
     icon: <AlertCircle size={18} />,
-    color: "#d97706",
-    bg: "rgba(234,179,8,0.08)",
-    border: "#d97706",
+    color: "var(--tone-warning)",
+    bg: "var(--tone-warning-bg)",
+    border: "var(--tone-warning)",
   },
   tip: {
     icon: <Lightbulb size={18} />,
-    color: "#7c3aed",
-    bg: "rgba(139,92,246,0.08)",
-    border: "#7c3aed",
+    color: "var(--tone-tip)",
+    bg: "var(--tone-tip-bg)",
+    border: "var(--tone-tip)",
   },
 };
 

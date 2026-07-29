@@ -43,7 +43,7 @@ export default function Layout({ children }: LayoutProps) {
         <aside
           className="w-64 border-r p-4"
           style={{
-            background: "var(--bg-base)",
+            background: "var(--bg-subtle)",
             borderColor: "var(--border-subtle)",
           }}
         >
@@ -92,7 +92,7 @@ export default function Layout({ children }: LayoutProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
-          background: "var(--bg-base)",
+          background: "var(--bg-subtle)",
           borderColor: "var(--border-subtle)",
         }}
       >
