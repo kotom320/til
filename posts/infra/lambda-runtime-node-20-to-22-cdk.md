@@ -95,3 +95,4 @@ TypeScript 버전은 그대로 뒀다. 함께 올리면 이 PR이 "런타임 업
 - CDK가 특정 런타임을 지원하는지는 설치된 `node_modules/aws-cdk-lib/aws-lambda/lib/runtime.d.ts`를 보면 바로 확인된다.
 - 런타임 상수만 올리면 로컬과 배포 환경 사이에 새 드리프트가 생긴다. `.nvmrc`와 `@types/node`까지 같이 맞춘다. 특히 로컬에서 배포하는 레포라면 로컬이 곧 배포 환경이다.
 - package-lock의 diff 크기는 대부분 키 재정렬이다. 놀라기 전에 의미 있는 변경만 세어본다.
+- 같은 작업 중에 발견한 sharp 컬러 프로파일 회귀는 [sharp에서 withMetadata를 autoOrient로 바꿨더니 ICC 프로파일이 사라졌다](/post/infra/sharp-autoorient-icc-profile-regression)에 따로 정리했다.
