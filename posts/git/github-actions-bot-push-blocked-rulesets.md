@@ -217,3 +217,7 @@ bypass를 걸면 대상 브랜치에 봇이 만든 머지 커밋이 계속 쌓�
 - **봇 push가 막히면 두 겹을 다 본다.** App installation 권한(`contents: write`)과 ruleset bypass 목록(`actor_type: Integration`, `bypass_mode: always`)
 - **bypass는 ruleset 단위다.** 규칙별로 못 고르니, 범위를 좁히려면 ruleset을 보호용과 리뷰용으로 쪼갠다
 - **`GITHUB_TOKEN` push는 하위 워크플로를 트리거하지 않는다.** 워크플로 연쇄가 필요하면 App 토큰을 써야 한다
+
+---
+
+- 이후 실제로 ruleset을 둘로 쪼개 봇에만 push를 허용한 과정과, 그 결정에서 비교한 대안은 [봇에게만 push를 허용하려고 Repository Ruleset을 둘로 쪼갠 이야기](/post/git/branch-sync-bot-ruleset-split)에 정리했다.
