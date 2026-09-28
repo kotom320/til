@@ -243,7 +243,7 @@ AND NOT EXISTS (SELECT 1 FROM sessions s2 JOIN session_prs sp USING (session_id)
 |---|---|---|
 | 작업 노선도 | 파이프라인 | CodePipeline |
 | 이슈 파악 | Jira | 옆 칸이 전부 도구 이름이다 |
-| 거침 · 지금 여기 · 지켜보는 중 · 아직 | 완료 · 진행 중 · 건너뜀 · 대기 | GitHub Actions 의 실행 상태 |
+| 거침 · 지금 여기 · 아직 | 완료 · 진행 중 · 대기 | GitHub Actions 의 실행 상태 |
 
 새로 지은 이름이 조금 더 정확해도, 익숙한 이름이 설명 없이 읽힌다.
 
