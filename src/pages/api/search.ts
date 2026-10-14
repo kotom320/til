@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getAllPosts, getPostBySlug } from "@/lib/posts";
 import { SearchResult } from "@/types/category";
 
+const MAX_QUERY_LENGTH = 100;
+
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<SearchResult[] | { error: string }>
@@ -14,6 +16,11 @@ export default function handler(
 
   if (!query || typeof query !== "string" || query.trim().length === 0) {
     return res.status(400).json({ error: "Query parameter 'q' is required" });
+  }
+
+  // 요청마다 전체 포스트를 읽으므로 비정상적으로 긴 쿼리는 미리 거른다
+  if (query.length > MAX_QUERY_LENGTH) {
+    return res.status(400).json({ error: "Query is too long" });
   }
 
   try {
