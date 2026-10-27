@@ -105,6 +105,65 @@ const json = JSON.parse(new TextDecoder().decode(bytes));
 
 참고로 `fromBase64` 의 `alphabet: 'base64url'` 은 `+`, `/` 가 섞인 표준 값을 거부한다. 지금 코드처럼 두 알파벳을 모두 받아야 한다면 치환 단계는 그대로 필요하다.
 
+## 자주 헷갈리는 것
+
+### base64 를 "바로" 디코딩하면 안 되나?
+
+base64 는 글자가 아니라 **바이트**를 인코딩한다. 인코딩하는 쪽은 사실 두 단계를 거친다.
+
+```
+"102동"  →(UTF-8)→  31 30 32 EB 8F 99  →(base64)→  MTAy64+Z
+ 글자                    바이트                       base64
+```
+
+그러니 디코딩도 두 단계를 거꾸로 밟아야 한다.
+
+```
+MTAy64+Z  →(atob)→  바이트 6개  →(TextDecoder)→  "102동"
+```
+
+ASCII 는 1글자 = 1바이트이고 바이트 값과 글자 값도 같다. 그래서 ASCII 만 있을 땐 `atob` 한 번으로 **우연히** 맞게 풀린다. 다른 언어에서 한 줄로 끝나는 것처럼 보이는 것도 안을 보면 두 단계다.
+
+```java
+// Java: base64 → 바이트 → UTF-8 문자열
+new String(Base64.getUrlDecoder().decode(s), StandardCharsets.UTF_8);
+```
+
+### 온라인 디코딩 사이트는 바로 풀어 주던데?
+
+사이트도 내부에서 두 단계를 거친다. 버튼이 하나라 한 번에 되는 것처럼 보일 뿐이다. 대부분 "Source charset: UTF-8" 같은 옵션이 있는데, 그게 우리 코드의 `TextDecoder` 단계다. `-`·`_` 도 알아서 받아 주는 경우가 많아서 base64url 문제도 안 보인다.
+
+charset 을 Latin-1(ISO-8859-1)로 바꿔 보면 `atob` 만 쓴 것과 똑같이 `102ë` 가 나온다.
+
+### `encodeURIComponent` 랑은 무슨 관계?
+
+이름은 비슷하지만 다른 인코딩이다.
+
+| | base64 (`btoa` / `atob`) | 퍼센트 인코딩 (`encodeURIComponent`) |
+|---|---|---|
+| 용도 | 바이트를 64종 글자로 표현 | URL 에 넣으면 안 되는 문자를 이스케이프 |
+| `"102동"` | `MTAy64+Z` | `102%EB%8F%99` |
+
+그래도 두 군데에서 만난다.
+
+**1. 예전에 한글 base64 를 풀던 꼼수**
+
+```js
+decodeURIComponent(escape(atob(s)));
+```
+
+`escape` 로 바이트를 `%EB%8F%99` 형태로 만든 뒤 `decodeURIComponent` 에게 UTF-8 해석을 맡기는 방식이다. 결국 `TextDecoder` 단계를 우회해서 한 것이다. `escape` 가 deprecated 라 지금은 쓰지 않는다.
+
+**2. 표준 base64 를 URL 에 넣을 때**
+
+표준 base64 의 `+`, `/`, `=` 는 URL 에서 의미가 있는 문자다. 특히 쿼리스트링에서 `+` 는 공백으로 해석된다.
+
+```js
+new URLSearchParams('q=MTAy64+Z').get('q'); // 'MTAy64 Z'
+```
+
+그래서 표준 base64 를 쿼리에 넣으려면 `encodeURIComponent` 로 감싸야 한다. base64url 은 이 문제를 피하려고 처음부터 URL 에 안전한 `-`, `_` 를 쓰도록 만든 포맷이다.
+
 ## 정리
 
 `atob` 는 "base64 → 바이트 문자열" 이다. 받기 전에 `-`·`_` 를 `+`·`/` 로 바꾸고, 받은 뒤엔 `TextDecoder` 로 UTF-8 을 풀어야 한글이 안 깨진다.
