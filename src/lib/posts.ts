@@ -12,6 +12,17 @@ import { markdownToHtml } from "./markdown";
 const POSTS_DIR = path.join(process.cwd(), "posts");
 
 /**
+ * posts/ 기준 상대 경로를 절대 경로로 바꾼다. `../` 등으로 posts/ 밖을 가리키면 거절한다.
+ */
+function resolveInPostsDir(...segments: string[]): string {
+  const resolved = path.resolve(POSTS_DIR, ...segments);
+  if (resolved !== POSTS_DIR && !resolved.startsWith(POSTS_DIR + path.sep)) {
+    throw new Error(`Invalid post path: ${segments.join("/")}`);
+  }
+  return resolved;
+}
+
+/**
  * 주어진 경로에서 모든 마크다운 파일을 재귀적으로 찾습니다.
  */
 function findMarkdownFiles(dir: string, relativePath = ""): string[] {
@@ -104,7 +115,7 @@ export function getPostsByCategory(category: string): PostMeta[] {
  * 특정 카테고리와 슬러그로 포스트 내용을 가져옵니다.
  */
 export function getPostBySlug(category: string, slug: string): PostContent {
-  const filePath = path.join(POSTS_DIR, category, `${slug}.md`);
+  const filePath = resolveInPostsDir(category, `${slug}.md`);
 
   if (!fs.existsSync(filePath)) {
     throw new Error(`Post not found: ${category}/${slug}`);
@@ -197,7 +208,7 @@ export function getCategoryTree(
  * 카테고리 정보를 가져옵니다.
  */
 export function getCategoryInfo(categoryPath: string): CategoryInfo {
-  const fullPath = path.join(POSTS_DIR, categoryPath);
+  const fullPath = resolveInPostsDir(categoryPath);
 
   if (!fs.existsSync(fullPath) || !fs.statSync(fullPath).isDirectory()) {
     throw new Error(`Category not found: ${categoryPath}`);
